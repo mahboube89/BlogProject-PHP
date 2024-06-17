@@ -19,10 +19,10 @@ h1 {
 	letter-spacing: 0.05em;
 }
 
-h2, h3, h4, h5  {
+/* h2, h3, h4, h5  {
 	color: dodgerblue;
 	letter-spacing: 0.05em;
-}
+} */
 
 h3, h4, h5 {
 	letter-spacing: 0.01em;
@@ -284,6 +284,13 @@ popupBox a.button:hover {
    --- LOGIN FORM ---
    =================================
 */
+a {
+   text-decoration: none;
+}
+
+li {
+   list-style: none;
+}
 
 button, input {
    outline: none;
@@ -382,3 +389,247 @@ input:focus {
 .login-submit:hover {
 	background-color: #005468
 }
+
+.row {
+	display: flex;
+   flex-wrap: wrap;
+   margin-top: 25px;
+   margin-right: -15px;
+   margin-left: -15px;
+}
+
+h1 {
+   text-align: center;
+}
+
+
+.intro-title {
+   letter-spacing: 0.3rem;
+}
+
+/* 
+   --- CATEGORY ---
+   =================================
+*/
+
+.col-lg-4 {
+   flex: 0 0 33.33333%;
+   max-width: 33.33333%;
+   
+}
+
+.blog-sidebar-category {
+   width: 300px;
+   display: flex;
+   flex-direction: column;
+   position: fixed;
+}
+
+.category-title {
+	display: flex;
+	align-items: center;
+	font-size: 16px;
+   /* padding-bottom: 0; */
+}
+
+.category-title h5 {
+   color: #111;
+    font-size: 1.125em;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+    margin-right: 15px;
+}
+
+.category-title::after {
+   content: "";
+   height: 1px;
+   flex-grow: 1;
+   display: block;
+   background-color: #e1e1e1;
+}
+
+.category-block {
+   width:300px;
+   margin: 0 auto;
+}
+
+.category {
+   
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 0 0.5rem;
+   overflow: hidden;
+   border-radius: 0.3rem;
+   border: 1px solid #007F96;
+   height: 3rem;
+   margin-bottom: 0.4rem;
+}
+
+.cat-list {
+   height:fit-content;
+   margin-top: 0;
+   padding: 0.5rem;
+   border: 1px solid rgba(30, 144, 255, 0.3);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cat-title {
+   font-size: 1em;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.cat-title:hover {
+   color: #004356;
+   text-decoration: underline;
+}
+
+
+.cat-quantity {
+   height: 2.5em;
+   width: 2.5em;
+   border: 1px solid #017286;
+   text-align: center;
+   line-height: 2.5em;
+   border-radius: 999px;
+   color: #017286;
+}
+/* 
+   --- BLOG CONTENT ---
+   =================================
+*/
+
+.col-lg-8 {
+	flex: 0 0 66.66667%;
+	max-width: 66.66667%;
+}
+
+
+.blogs-wrapper-header {
+   /* margin-bottom: 3rem; */
+   padding-right: 100px;
+   /* padding-left: 15px; */
+   display: flex;
+   align-items: baseline;
+   height: 4.5rem;
+}
+
+
+.blog-header-title {
+   display: flex;
+   align-items: center;
+   margin-bottom: 2.5em;
+   font-size: 16px;
+   flex-grow: 1;
+}
+
+.blog-header-title h5 {
+   color: #111;
+   font-size: 1.125em;
+   font-weight: 600;
+   line-height: 1;
+   text-transform: uppercase;
+   margin-right: 15px;
+}
+
+.blog-header-title::after{
+   content: "";
+   height: 1px;
+   flex-grow: 1;
+   display: block;
+   background-color: #e1e1e1;
+}
+
+.blog-header-controller {
+   padding-left:15px;
+}
+
+.show-all-blogs-link {
+   text-decoration: none;
+   /* padding: 15px 18px; */
+   /* border-radius: 30px; */
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   font-weight: 500;
+   /* border:1px solid #007F96 ; */
+   color: gray;
+}
+
+.show-all-blogs-link:hover {
+   color: #004356;
+   text-decoration: underline;
+}
+
+.blog-post-container{
+   border: 1px solid rgba(30, 144, 255, 0.3);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+   height: fit-content;
+   margin-right: 4rem;
+   margin-bottom: 1rem;
+   padding: 1.2rem;
+}
+
+.post-wrapper {
+   
+}
+
+.post-category {
+   text-align: right;
+   color: #017286;
+   border: 1px solid #017286;
+   display: inline-block;
+   padding: 10px 10px;
+   border-radius: 40px;
+   font-size: 0.6rem;
+   letter-spacing: 1px;
+}
+
+.post-title {
+   font-size: 1.2rem;
+}
+
+.post-paragraph {
+   font-size: 0.8rem;
+   line-height: 1.3;
+}
+
+.post-infos {
+   margin-bottom: 0.4rem;
+   color:#005468;
+}
+
+.post-content {
+   overflow: auto;
+}
+
+.post-img {
+   width: 300px;
+   height: 300px;
+}
+
+.post-img img {
+   width: 100%;
+   height: 100%;
+   object-fit: contain;
+
+}
+.left {
+   float: left;
+   
+}
+.right {
+   float: right;
+}
+
+
+
+
+
+
+
+
