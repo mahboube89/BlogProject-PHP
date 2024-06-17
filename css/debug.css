@@ -1,0 +1,117 @@
+/**************************************/
+/********** DEBUGGING STYLES **********/
+/**************************************/
+
+
+/********** MAIN **********/
+
+.value {
+	opacity: 70%;
+}
+pre {
+	border-radius: 10px;
+	display: table;
+	margin-left: 1em;
+	border-spacing: 1em;
+}
+
+.debug,
+.sanitizeString,.sanitizeFloat,
+.checkMandatory,.validateInputString,.validateEmail,.validateNumber,.validatePrice,.validateImageUpload,
+.dateTime,.DB,.auth,.classLoader {
+	background-color: dodgerblue;
+	padding: 2px 5px;
+	margin-bottom: 2px;
+	margin-top: 2px;
+	font-family: arial;
+	font-size: 0.9em;
+	color: white;
+	margin-left: 0.8em;
+}
+
+
+/********** CLASSES AND TRAITS **********/
+.class,.trait {
+	font-family: georgia;
+}
+.class {
+	background-color: lightblue;
+	color: #333;
+}
+.trait {
+	background-color: lightskyblue;
+	color: #333;
+}
+
+
+/********** FUNCTIONS AND METHODS **********/
+.classLoader {
+	font-family: courier new;
+	font-size: 0.9em;
+	background-color: cornflowerblue;
+}
+.sanitizeString {
+	background-color: DarkSeaGreen;
+}
+.sanitizeFloat {
+	background-color: LightGreen;
+	color: black;
+}
+.checkMandatory {
+	background-color: LightSeaGreen;
+	color: white;
+}
+.validateInputString {
+	background-color: paleGreen;
+	color: black;
+}
+.validateEmail {
+	background-color: mediumspringgreen;
+	color: black;
+}
+.validateNumber {
+	background-color: springgreen;
+	color: black;
+}
+.validatePrice {
+	background-color: MediumSpringGreen;
+	color: black;
+}
+.validate2Passwords {
+	background-color: paleturquoise;
+	color: black;
+}
+.image {
+	background-color: darkcyan;
+}
+.validateImageUpload, .imageUploader {
+	background-color: mediumaquamarine;
+	color: black;
+}
+.dateTime {
+	background-color: #ccc;
+}
+.db {
+	background-color: darkorange;
+}
+.auth {
+	background-color: palegoldenrod;
+	color: black;
+}
+
+
+/********** STATUS STYLES **********/
+.err, .ok, .hint {
+	border-radius: 0.5em 0 0 0.5em;
+	border-left: 0.7em solid whitesmoke;
+	margin-left: 0em;
+}
+.err {
+	border-color: red;
+}
+.ok {
+	border-color: lime;
+}
+.hint {
+	border-color: darkorange;
+}

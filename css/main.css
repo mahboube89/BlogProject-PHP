@@ -1,0 +1,384 @@
+/**********************************/
+/********** BASIC STYLES **********/
+/**********************************/
+
+body {
+	font-family:Roboto, verdana ;
+	font-size: 14px;
+	box-sizing: border-box;
+	padding: 0% 3%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 2em;
+}
+
+h1 { 
+	color: black;  
+	font-size: 1.5em;
+	letter-spacing: 0.05em;
+}
+
+h2, h3, h4, h5  {
+	color: dodgerblue;
+	letter-spacing: 0.05em;
+}
+
+h3, h4, h5 {
+	letter-spacing: 0.01em;
+}
+
+h2 {
+	font-size: 1.3em;
+}
+
+h3 {
+	font-size: 1.1em;
+}
+
+h4, h5 {
+	font-size: 1em;
+	color: gray;
+}
+h4 {
+	font-weight: bold;
+}
+
+p.small { 
+	font-size: 0.7em; color: gray;
+}
+
+hr {
+	height: 1px;
+	border: none;
+	background-color: gray;
+}
+
+
+/******************************************/
+/********** HTML ELEMENTS STYLES **********/
+/******************************************/
+
+/********** COMMON FORMULAR STYLES **********/
+fieldset, input, textarea, select {
+	border-radius: 5px;
+}
+fieldset {
+	margin-bottom: 10px;
+}
+fieldset fieldset {
+	width: 78%;
+	border: 1px solid gray;
+}
+select.day {
+	width: 75px;
+}
+select.month {
+	width: 100px;
+}
+select.year {
+	width: 75px;
+}
+input, textarea {
+	margin: 5px 0;
+	padding: 5px;
+	width: 80%;
+}
+textarea {
+	height: 100px;
+	font-family: verdana;
+}
+input[type="submit"] {
+	width: 100%;
+}
+input.short {
+	width: 125px;
+}
+input::placeholder {
+   opacity: 0.9;
+	font-size: 0.9em;
+}
+
+
+/********** TABLES **********/
+table {
+	width: 100%; 
+	font-family: courier new; 
+	font-size: 0.9em; 
+}
+table, td { 
+	border: 1px solid teal; 
+	border-collapse: collapse;
+}
+th {
+	background-color: lightblue; 
+	padding: 10px;
+}
+td {
+	padding: 10px;  
+	text-align: center; 
+	color: teal;
+}
+td:last-child {
+	/* for future use */
+}
+tr:nth-child(even) {
+	background-color: #eee;
+}
+tr:hover {
+	background-color: #dee;
+}
+
+
+/*****************************/
+/********** CLASSES **********/
+/*****************************/
+
+/********** SPECIAL FORMULARS STYLES **********/
+header {
+	text-align: right;
+}
+form.login {
+	width: 435px;
+}
+
+
+/********** FLOATING **********/
+.fleft {
+	float: left;
+}
+.fright {
+	float: right;
+}
+.clearer {
+	clear: both;
+	width: 0px;
+	height: 0px;
+}
+
+
+/********** AVATAR IMAGE **********/
+img.avatar {
+	width: 150px;
+	height: 150px;
+	margin: 15px 15px 15px 0;
+	border: 1px solid lightgray;
+	padding: 5px;
+}
+
+/********** USER MESSAGES STYLES **********/
+.error {
+	color: red;
+}
+.success {
+	color: green;
+}
+.info {
+	color: darkorange;
+}
+.marker {
+	color: darkred;
+	font-size: 1.1em;
+	padding-left: 10px;
+	font-weight: bold;
+}
+
+
+/********** SPECIAL POPUP MESSAGES STYLES **********/
+popupBox {
+	border: 1px solid darkorange;
+	box-shadow: 20px 10px 25px 0px rgba(51,51,51,0.5);
+	border-radius: 10px;
+	background-color: rgba(230,230,230,0.9);
+	width: 50%;
+	text-align: center;
+	color: #666;
+	padding: 25px;
+	position: absolute;
+   margin: auto;
+	/* 1left: 25%; */
+	/* 1top: 40%; */
+}
+
+popupBox h3 {
+	color: black;
+}
+
+popupBox p {
+	color: black;
+}
+
+popupBox a {
+	border-radius: 5px;
+	padding: 5px 8px;
+	font-size: 1.2em;
+	text-decoration: none;
+}
+popupBox a:hover, popupBox a.button:hover {
+	background-color: rgba(255,140,0,0.3);
+}
+popupBox a.button {
+	background-color: rgba(255,255,255,0.3);
+	border: 1px solid gray;
+	color: gray;
+}
+popupBox a.button:hover {
+	color: black;
+	cursor: pointer;
+}
+
+/* 
+   =================================
+            INDEX.PHP STYLES
+   =================================
+*/
+
+.container {
+   width: 90%;
+   height: 100%;
+   margin: 0 auto;
+   padding: 1rem;
+
+}
+
+/* 
+   --- HEADER MENU ---
+   =================================
+*/
+.header-menu {
+   
+   padding: 10px;
+   border-radius: 1rem;   
+   font-size: 0.8rem; 
+   margin-bottom: 25px;  
+}
+
+.nav {
+   list-style: none;
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: flex-end;
+   gap: 0.5rem;  
+}
+
+.nav-item {
+   margin-left: 6px;
+}
+
+.nav-link {
+   text-decoration: none;
+   padding: 15px 18px;
+   border-radius: 30px;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   font-weight: 500;
+   background-color:#007F96 ;
+   color: #fff;
+}
+
+.nav-link:hover {
+   background-color:#005468 ;
+}
+
+/* 
+   --- LOGIN FORM ---
+   =================================
+*/
+
+button, input {
+   outline: none;
+   border: none;
+   padding: 8px 5px;
+   letter-spacing: 1px;
+
+}
+.login {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   justify-content: center;
+   width: 55%;
+	max-width:600px;
+   min-width: 600px;
+	margin: 30px 10px 30px auto;
+	padding: 40px 30px 30px;
+	border: 1px solid rgba(30, 144, 255, 0.3);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login > h2 {
+	margin:20px 0 50px;
+	text-align: center;
+	color: #004356;
+   
+}
+
+.form {
+   margin: 0;
+   display: flex;
+	gap: 0.8rem;
+   justify-content: flex-end;
+   align-items: center;
+}
+
+.textbox {
+	position: relative;
+	margin-bottom: 16px;
+}
+
+.textbox input {
+	width: 90%;
+   height: 30px;
+   border: 1px solid rgba(30, 144, 255, 0.3);
+   border-radius: 10px;
+   padding: 8px 10px;
+   transition: border-color 0.3s;
+   font-size: 0.8rem;
+}
+
+
+.textbox label {
+	position: absolute;
+   top: 75%;
+   left: 10px;
+   transform: translateY(-50%);
+   color: rgb(68, 65, 70);
+   pointer-events: none;
+   transition: all 0.3s;
+   transform-origin: left bottom;
+   font-size: 14px;
+	padding-bottom: 10px;
+   letter-spacing: 1px;
+}
+
+input:focus ~ label, input:not(:placeholder-shown) ~ label {
+   transform: translateY(-218%) scale(0.90); 
+   color: #004356;
+}
+
+
+input:focus {
+	border-color: #004356;
+}
+
+.login-error {
+   display: block;
+   color:#C40D43;
+   letter-spacing: 1px;
+}
+
+.login-submit {
+   height: 45px;
+   width: 125px;
+	border-radius: 30px;
+	background-color: #007F96 ;
+	color: #fff;
+	cursor: pointer;
+	margin-bottom: 20px;
+   font-weight: 500;
+}
+
+.login-submit:hover {
+	background-color: #005468
+}
