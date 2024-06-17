@@ -544,8 +544,13 @@ h1 {
    background-color: #e1e1e1;
 }
 
-.blog-header-controller {
-   padding-left:15px;
+.blog-show-all {
+   margin-left:15px;
+   padding:10px;
+   margin-bottom: 1rem;
+   text-align: center;
+   border: 1px solid #007F96;
+   border-radius: 40px;
 }
 
 .show-all-blogs-link {
@@ -556,7 +561,7 @@ h1 {
    letter-spacing: 1px;
    font-weight: 500;
    /* border:1px solid #007F96 ; */
-   color: gray;
+   color: #007F96;
 }
 
 .show-all-blogs-link:hover {

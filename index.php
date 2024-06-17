@@ -109,119 +109,117 @@
 									<div class="blog-header-title">
 										<h5>Blogs</h5>
 									</div>
-									<div class="blog-header-controller" >
-										<a class="show-all-blogs-link" href="#">SHOW ALL</a>
+									<div class="blog-show-all" >
+											<a class="show-all-blogs-link" href="#">SHOW ALL</a>
 									</div>
 							</div>
-							<div class="blog-post-container">
-								<article class="post-wrapper">
-	
-									<h3 class="post-category">Category: ???</h3>
-	
-									<h2 class="post-title">BLOG Title</h2>
-									<div class="post-infos">
-										<p>BY ??? ??? am 24.08.2017 um 12:33 Uhr</p>
-									</div>
-									<div class="post-content">
 
-										<figure class="post-img right">
-											<img src="./css/images/product-01.png" alt=""  >
-										</figure>
-										
-										
-										<p class="post-paragraph">
-											Lorem ipsum dolor sit 
-											amet consectetur, adipisicing 
-											elit. Tenetur accusantium amet, 
-											culpa exercitationem voluptatem 
-											itaque repellat asperiores? Quam r
-											ecusandae itaque ipsum beatae conseq
-											uuntur? Molestiae non quae cum vero
-											 totam beatae.
-											 
-											 Lorem ipsum dolor sit 
-											amet consectetur, adipisicing 
-											elit. Tenetur accusantium amet, 
-											culpa exercitationem voluptatem 
-											itaque repellat asperiores? Quam r
-											ecusandae itaque ipsum beatae conseq
-											uuntur? Molestiae non quae cum vero
-											 totam beatae.
-											 Lorem ipsum dolor sit 
-											amet consectetur, adipisicing 
-											elit. Tenetur accusantium amet, 
-											culpa exercitationem voluptatem 
-											itaque repellat asperiores? Quam r
-											ecusandae itaque ipsum beatae conseq
-											uuntur? Molestiae non quae cum vero
-											 totam beatae.
+
+							<article class="blog-post-container">							
+	
+								<h3 class="post-category">Category: ???</h3>
+
+								<h2 class="post-title">BLOG Title</h2>
+								<div class="post-infos">
+									<p>BY ??? ??? am 24.08.2017 um 12:33 Uhr</p>
+								</div>
+								<div class="post-content">
+
+									<figure class="post-img right">
+										<img src="./css/images/product-01.png" alt=""  >
+									</figure>
+									
+									
+									<p class="post-paragraph">
+										Lorem ipsum dolor sit 
+										amet consectetur, adipisicing 
+										elit. Tenetur accusantium amet, 
+										culpa exercitationem voluptatem 
+										itaque repellat asperiores? Quam r
+										ecusandae itaque ipsum beatae conseq
+										uuntur? Molestiae non quae cum vero
+											totam beatae.
 											
-										</p>
-	
-										
-										
-									</div>
-	
-	
-								</article>
-
-							</div>
-
-
-
-							<div class="blog-post-container">
-								<article class="post-wrapper">
-	
-									<h3 class="post-category">Category: ???</h3>
-	
-									<h2 class="post-title">BLOG Title</h2>
-									<div class="post-infos">
-										<p>BY ??? ??? am 24.08.2017 um 12:33 Uhr</p>
-									</div>
-									<div class="post-content">
-
-										<figure class="post-img left">
-											<img src="./css/images/product-01.png" alt=""  >
-										</figure>
-										
-										
-										<p class="post-paragraph">
 											Lorem ipsum dolor sit 
-											amet consectetur, adipisicing 
-											elit. Tenetur accusantium amet, 
-											culpa exercitationem voluptatem 
-											itaque repellat asperiores? Quam r
-											ecusandae itaque ipsum beatae conseq
-											uuntur? Molestiae non quae cum vero
-											 totam beatae.
-											 
-											 Lorem ipsum dolor sit 
-											amet consectetur, adipisicing 
-											elit. Tenetur accusantium amet, 
-											culpa exercitationem voluptatem 
-											itaque repellat asperiores? Quam r
-											ecusandae itaque ipsum beatae conseq
-											uuntur? Molestiae non quae cum vero
-											 totam beatae.
-											 Lorem ipsum dolor sit 
-											amet consectetur, adipisicing 
-											elit. Tenetur accusantium amet, 
-											culpa exercitationem voluptatem 
-											itaque repellat asperiores? Quam r
-											ecusandae itaque ipsum beatae conseq
-											uuntur? Molestiae non quae cum vero
-											 totam beatae.
+										amet consectetur, adipisicing 
+										elit. Tenetur accusantium amet, 
+										culpa exercitationem voluptatem 
+										itaque repellat asperiores? Quam r
+										ecusandae itaque ipsum beatae conseq
+										uuntur? Molestiae non quae cum vero
+											totam beatae.
+											Lorem ipsum dolor sit 
+										amet consectetur, adipisicing 
+										elit. Tenetur accusantium amet, 
+										culpa exercitationem voluptatem 
+										itaque repellat asperiores? Quam r
+										ecusandae itaque ipsum beatae conseq
+										uuntur? Molestiae non quae cum vero
+											totam beatae.
+										
+									</p>
+
+									
+									
+								</div>
+
+							</article>
+
+
+
+							<article class="blog-post-container">
+								
+	
+								<h3 class="post-category">Category: ???</h3>
+
+								<h2 class="post-title">BLOG Title</h2>
+								<div class="post-infos">
+									<p>BY ??? ??? am 24.08.2017 um 12:33 Uhr</p>
+								</div>
+								<div class="post-content">
+
+									<figure class="post-img left">
+										<img src="./css/images/product-01.png" alt=""  >
+									</figure>
+									
+									
+									<p class="post-paragraph">
+										Lorem ipsum dolor sit 
+										amet consectetur, adipisicing 
+										elit. Tenetur accusantium amet, 
+										culpa exercitationem voluptatem 
+										itaque repellat asperiores? Quam r
+										ecusandae itaque ipsum beatae conseq
+										uuntur? Molestiae non quae cum vero
+											totam beatae.
 											
-										</p>
+											Lorem ipsum dolor sit 
+										amet consectetur, adipisicing 
+										elit. Tenetur accusantium amet, 
+										culpa exercitationem voluptatem 
+										itaque repellat asperiores? Quam r
+										ecusandae itaque ipsum beatae conseq
+										uuntur? Molestiae non quae cum vero
+											totam beatae.
+											Lorem ipsum dolor sit 
+										amet consectetur, adipisicing 
+										elit. Tenetur accusantium amet, 
+										culpa exercitationem voluptatem 
+										itaque repellat asperiores? Quam r
+										ecusandae itaque ipsum beatae conseq
+										uuntur? Molestiae non quae cum vero
+											totam beatae.
+										
+									</p>
 	
 										
 										
 									</div>
 	
 	
-								</article>
+								
 
-							</div>
+							</article>
 
 
 
