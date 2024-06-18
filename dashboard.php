@@ -12,7 +12,6 @@
             require_once('./include/form.inc.php');
             require_once('./include/db.inc.php');
 
-
 # ==================================================================================================
 
 
@@ -23,10 +22,161 @@
             #╚═══════════════════════════════════════════════════════╝
 
             //══════════----> VARIABLEN INITIALISIEREN <----═════════
+
             $newCategoryName = NULL;
             $errorNewCategoryName = NULL;
 
             $addCategoryUserMessage = NULL;
+
+
+
+
+# ==================================================================================================
+
+
+            #╔═════════════════════════════════════════════════╗
+            #║																	║
+            #║          ---| SECURE PAGE ACCESS |---           ║
+            #║																	║
+            #╚═════════════════════════════════════════════════╝
+
+				//══════════----> PREPARE SESSSION <----═════════
+
+				session_name('wwwblogprojektmahboubede');
+
+            //══════════----> START SESSION <----═════════
+            session_start();
+
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_SESSION);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+            //══════════----> CHECK FOR VALID LOGIN <----═════════
+
+
+            if(isset($_SESSION['ID']) === false OR $_SESSION['IPAddress'] !== $_SERVER['SERVER_ADDR'] ) {
+if(DEBUG)      echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: Login validation is currently not possible! <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+
+               //══════════----> DENY PAGE ACCESS <----═════════
+               session_destroy();
+
+               //══════════----> REDIRECT TO INDEX PAGE <----═════════
+               header('LOCATION: ./');
+
+               //----> Terminate script execution as a security fallback
+               exit(); 
+
+
+            } else {
+if(DEBUG)      echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Login has been successfully validated. <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+               //----> Generate a new session ID on every page refresh to enhance security
+               session_regenerate_id(true); 
+
+
+               //══════════----> SHOW USER FIRSTNAME AND LASTNAME IN HEADER <----═════════
+
+               $userID = $_SESSION['ID'];
+
+               //══════════----> FETCH USER DATA FROM DB <----═════════
+               #╔═════════════════════════════════════════════════════╗
+               #║																	    ║
+               #║           ---| DATABASE OPERATIONS |----            ║
+               #║																	    ║
+               #╚═════════════════════════════════════════════════════╝
+
+if(DEBUG)	   echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Fetch user data from DB...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+               //══════════----> DB-Step-1 : Connet to DB <----═════════
+               $PDO = dbConnect('blogprojekt');
+
+               //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
+               $sql = 'SELECT userFirstName, userLastName FROM users
+                        WHERE userID = :userID';
+
+               $placeholders = array('userID' => $userID);
+
+
+               //══════════----> DB-Step-3 : Prepared Statements <----═════════
+               try {
+                  // Prepare: SQL-Statement vorbereiten
+                  $PDOStatement = $PDO->prepare($sql);
+                  
+                  // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
+                  $PDOStatement->execute($placeholders);
+                  // showQuery($PDOStatement);
+                  
+               } catch(PDOException $error) {
+if(DEBUG)         echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
+				   }
+
+			      //══════════----> DB-Step-4 : Daten proccess <----═════════
+					// Get user data from DB
+					$userInfos = $PDOStatement->fetch(PDO::FETCH_ASSOC);
+
+               //══════════----> CLOSE DB CONNECTION <----═════════ 
+               dbClose($PDO, $PDOStatement);
+
+// if(DEBUG_A)		echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$userInfos <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)		print_r($userInfos);					
+// if(DEBUG_A)		echo "</pre>";
+
+
+            } // CHECK FOR VALID LOGIN END
+
+
+# ==================================================================================================
+
+
+            #╔═══════════════════════════════════════════════════════╗
+            #║																		   ║
+            #║        ---| LOGOUT PROCESS-URL PARAMETER |---         ║
+            #║																		   ║
+            #╚═══════════════════════════════════════════════════════╝
+
+
+				//══════════----> GET ARRAY PREVIEW <----═════════
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_GET <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_GET);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+				//══════════----> URL-STEP-1 : Check if the url prameters is passed <----═════════
+
+            if(isset($_GET['action']) === true ) {
+if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: URL parameter 'action' is passed...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+            
+
+					//══════════----> URL-STEP-2 : Reading, defusing and debugging the passed URL-parameters <----═════════ 
+if(DEBUG)	   echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Parameters are reading, sanitizing...<i>(" . basename(__FILE__) . ")</i></p>\n";
+               
+               $action = sanitizeString($_GET['action']);
+if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$action: $action <i>(" . basename(__FILE__) . ")</i></p>\n";
+            
+               //══════════----> URL-STEP-3 : Branch based on the permitted value of the URL parameter <----═════════         
+
+               if( $action === 'logout') {
+
+                  //══════════----> URL-STEP-4 : Data Processing <----═════════ 
+if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout process start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+                  // ----> 1. Delete session data
+                  session_destroy();
+
+                  // ----> 2. Redirect user to index page
+                  header('LOCATION: ./');
+
+                  exit();
+
+               } // Branch based on the permitted value END
+
+            } // LOGOUT PROCESS-URL PARAMETER
+
 
 # ==================================================================================================
 
@@ -40,9 +190,9 @@
 
 				//══════════----> POST ARRAY PREVIEW <----═════════
 
-if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_POST <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-if(DEBUG_A)	print_r($_POST);					
-if(DEBUG_A)	echo "</pre>";
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_POST <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_POST);					
+// if(DEBUG_A)	echo "</pre>";
 
 				//══════════----> FORM-STEP-1 : Check if the form has been submitted <----═════════
             if(isset($_POST['formType']) && $_POST['formType'] === 'newCategory') {
@@ -252,11 +402,11 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
 			<div class="dashboard-header" >
 
             <div class="greeting">
-               <p>Welcome Back <b>Peter Peterson</b></p>
+               <p>Welcome Back <b><?= $userInfos['userFirstName'] ?> <?= $userInfos['userLastName'] ?> !</b></p>
             </div>
 
 				<ul class="nav">
-					<li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
+					<li class="nav-item"><a class="nav-link" href="?action=logout">Logout</a></li>
 					<li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
 				</ul>
 

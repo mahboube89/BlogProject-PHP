@@ -89,7 +89,7 @@ if(DEBUG)	      echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: 
 					} else {
 if(DEBUG)	      echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: The form is formally error-free. <i>(" . basename(__FILE__) . ")</i></p>\n";				
 
-			         //══════════----> FORM-STEP-4 : Form values proccessing <----═════════
+			         //══════════----> FORM-STEP-4 : Form values processing <----═════════
 			         //══════════----> FETCH USER DATA FROM DB <----═════════
                   #╔═════════════════════════════════════════════════════╗
                   #║																	    ║
@@ -128,8 +128,6 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 
 
 			         //══════════----> CLOSE DB CONNECTION <----═════════ 
-if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Close the DB connection...<i>(" . basename(__FILE__) . ")</i></p>\n";
-
                   dbClose($PDO, $PDOStatement);
 
 						//══════════----> DISPLAY USER DATA ARRAY <----═════════
@@ -184,24 +182,19 @@ if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Sessi
 
 									//══════════----> SAVE USER DATA INTO SESSION FILE <----═════════
 
-									$_SESSION['ID'] = $userInfos['userID'];
+									$_SESSION['ID']			= $userInfos['userID'];
+									$_SESSION['IPAddress']	= $_SERVER['SERVER_ADDR'];
 
 if(DEBUG_A)						echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
 if(DEBUG_A)						print_r($_SESSION);					
 if(DEBUG_A)						echo "</pre>";
 
-
-
-
 									//══════════----> REDIRECT TO DASHBOARD PAGE <----═════════
 									header('LOCATION: ./dashboard.php');
 
+									//══════════----> TODO: DON'T SHOW LOGIN FORM <----═════════
 
-									//══════════----> DON'T SHOW LOGIN FORM <----═════════
-
-								} // LOGIN PROCESS AND PREPARE SESSSION END
-
-								
+								} // LOGIN PROCESS AND PREPARE SESSSION EN								
 
 							} // PASSWORD VALIDATE END
 
@@ -211,7 +204,54 @@ if(DEBUG_A)						echo "</pre>";
 
 				} // LOGIN FORM PROCESS END
 
+# ==================================================================================================
 
+
+            #╔═══════════════════════════════════════════════════════╗
+            #║																		   ║
+            #║        ---| LOGOUT PROCESS-URL PARAMETER |---         ║
+            #║																		   ║
+            #╚═══════════════════════════════════════════════════════╝
+
+
+				//══════════----> GET ARRAY PREVIEW <----═════════
+
+if(DEBUG_A)		echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_GET <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+if(DEBUG_A)		print_r($_GET);					
+if(DEBUG_A)		echo "</pre>";
+				
+				
+					//══════════----> URL-STEP-1 : Check if the url prameters is passed <----═════════
+				
+					if(isset($_GET['action']) === true ) {
+if(DEBUG)			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: URL parameter 'action' is passed...<i>(" . basename(__FILE__) . ")</i></p>\n";
+												
+				
+									//══════════----> URL-STEP-2 : Reading, defusing and debugging the passed URL-parameters <----═════════ 
+if(DEBUG)	  		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Parameters are reading, sanitizing...<i>(" . basename(__FILE__) . ")</i></p>\n";
+									
+						$action = sanitizeString($_GET['action']);
+if(DEBUG_V)			echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$action: $action <i>(" . basename(__FILE__) . ")</i></p>\n";
+								
+							//══════════----> URL-STEP-3 : Branch based on the permitted value of the URL parameter <----═════════         
+				
+							if( $action === 'logout') {
+				
+								//══════════----> URL-STEP-4 : Data Processing <----═════════ 
+if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout process start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+				
+								// ----> 1. Delete session data
+								session_destroy();
+				
+								// ----> 2. Redirect user to index page
+								header('LOCATION: ./');
+				
+								exit();
+				
+							} // Branch based on the permitted value END
+				
+					} // LOGOUT PROCESS-URL PARAMETER
+				
 
 
 # ══════════════════════════════════════════════════════════════════════════════════════════════════
@@ -240,8 +280,8 @@ if(DEBUG_A)						echo "</pre>";
 			<div class="header-menu hidden" >
 
 				<ul class="nav">
-					<li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+					<li class="nav-item"><a class="nav-link" href="?action=logout">Logout</a></li>
+					<li class="nav-item"><a class="nav-link" href="./dashboard.php">Dashboard</a></li>
 				</ul>
 
 			</div>
