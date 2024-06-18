@@ -19,7 +19,7 @@
 				*/
 				function sanitizeString($value) {
 					#********** LOCAL SCOPE START **********#
-if(DEBUG_F)		echo "<p class='debug sanitizeString'>🌀<b>Line " . __LINE__ . "</b>: Aufruf " . __FUNCTION__ . "('$value') <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_F)		echo "<p class='debug sanitizeString'>🌀<b> Line " . __LINE__ . "</b>: Aufruf " . __FUNCTION__ . "('$value') <i>(" . basename(__FILE__) . ")</i></p>\n";
 					
 					/*
 						SCHUTZ GEGEN EINSCHLEUSUNG UNERWÜNSCHTEN CODES:
@@ -80,13 +80,13 @@ if(DEBUG_F)		echo "<p class='debug sanitizeString'>🌀<b>Line " . __LINE__ . "<
 				*/
 				function validateInputString($value, $mandatory=INPUT_MANDATORY, $maxLength=INPUT_MAX_LENGTH, $minLength=INPUT_MIN_LENGTH) {
 					#********** LOCAL SCOPE START **********#
-if(DEBUG_F)		echo "<p class='debug validateInputString'>🌀<b>Line " . __LINE__ . "</b>: Aufruf " . __FUNCTION__ . "( '$value' | mandatory:$mandatory | [$minLength|$maxLength] ) <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_F)		echo "<p class='debug validateInputString'>🌀<b> Line " . __LINE__ . "</b>: Call " . __FUNCTION__ . "( '$value' | mandatory:$mandatory | [$minLength|$maxLength] ) <i>(" . basename(__FILE__) . ")</i></p>\n";
 					
 					
 					#********** MANDATORY CHECK **********#
 					if( $mandatory === true AND $value === NULL ) {
 						// Fehlerfall
-						return 'Dies ist ein Pflichtfeld!';
+						return 'This is a required field!';
 					}		
 					
 					
@@ -108,7 +108,7 @@ if(DEBUG_F)		echo "<p class='debug validateInputString'>🌀<b>Line " . __LINE__
 					*/
 					if( $value !== NULL AND mb_strlen($value) > $maxLength ) {
 						// Fehlerfall
-						return "Darf maximal $maxLength Zeichen lang sein!";
+						return "May be a maximum of $maxLength characters long!";
 					}
 					
 					
@@ -133,7 +133,7 @@ if(DEBUG_F)		echo "<p class='debug validateInputString'>🌀<b>Line " . __LINE__
 					*/
 					if( $value !== NULL AND mb_strlen($value) < $minLength ) {
 						// Fehlerfall
-						return "Muss mindestens $minLength Zeichen lang sein!";
+						return "Must be at least $minLength characters long!";
 					}
 					
 					
@@ -162,19 +162,19 @@ if(DEBUG_F)		echo "<p class='debug validateInputString'>🌀<b>Line " . __LINE__
 				*/
 				function validateEmail($value) {
 					#********** LOCAL SCOPE START **********#
-if(DEBUG_F)		echo "<p class='debug validateEmail'>🌀<b>Line " . __LINE__ . "</b>: Aufruf " . __FUNCTION__ . "( '$value' ) <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_F)		echo "<p class='debug validateEmail'>🌀<b> Line " . __LINE__ . "</b>: Aufruf " . __FUNCTION__ . "( '$value' ) <i>(" . basename(__FILE__) . ")</i></p>\n";
 					
 					
 					#********** MANDATORY CHECK **********#
 					if( $value === NULL ) {
 						// Fehlerfall
-						return 'Dies ist ein Pflichtfeld!';
+						return 'This is a required field!';
 					}
 					
 					
 					if( filter_var($value, FILTER_VALIDATE_EMAIL) === false ) {
 						// Fehlerfall
-						return 'Dies ist keine gültige Email-Adresse!';
+						return 'This is not a valid email address!';
 					}
 					
 					
@@ -219,7 +219,7 @@ if(DEBUG_F)		echo "<p class='debug validateEmail'>🌀<b>Line " . __LINE__ . "</
 														$imageAllowedMimeTypes 	= IMAGE_ALLOWED_MIME_TYPES )
 				{
 					#********** LOCAL SCOPE START **********#
-if(DEBUG_F)		echo "<p class='debug validateImageUpload'>🌀<b>Line " . __LINE__ . "</b>: Aufruf " . __FUNCTION__ . "( '$fileTemp' ) <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_F)		echo "<p class='debug validateImageUpload'>🌀<b> Line " . __LINE__ . "</b>: Aufruf " . __FUNCTION__ . "( '$fileTemp' ) <i>(" . basename(__FILE__) . ")</i></p>\n";
 					
 					
 					#**************************************************************************#
@@ -273,7 +273,7 @@ if(DEBUG_F)		echo "</pre>";
 					#********** CHECK FOR VALID MIME TYPE **********#
 					if( $imageDataArray === false ) {
 						// Fehlerfall (MIME TYPE IS NO VALID IMAGE TYPE)
-						return array( 'imagePath' => NULL, 'imageError' => 'Dies ist keine gültige Bilddatei!' );
+						return array( 'imagePath' => NULL, 'imageError' => 'This is not a valid image format!' );
 						
 					} elseif( is_array($imageDataArray) === true ) {
 						// Erfolgsfall
@@ -345,28 +345,28 @@ if(DEBUG_F)			echo "<p class='debug validateImageUpload value'><b>Line " . __LIN
 					*/
 					if( array_key_exists($imageMimeType, $imageAllowedMimeTypes) === false ) {
 						// 2. Fehlerfall (unerlaubter Bildtyp)
-						return array( 'imagePath' => NULL, 'imageError' => 'Dies ist kein erlaubter Bildtyp!' ); 
+						return array( 'imagePath' => NULL, 'imageError' => 'This is not an allowed image type!' ); 
 					}
 					
 					
 					#********** VALIDATE IMAGE WIDTH **********#
 					if( $imageWidth > $imageMaxWidth ) {
 						// 3. Fehlerfall (Bildbreite zu groß)
-						return array( 'imagePath' => NULL, 'imageError' => "Die Bildbreite darf maximal $imageMaxWidth Pixel betragen!" );
+						return array( 'imagePath' => NULL, 'imageError' => "The image width may not exceed $imageMaxWidth pixels!" );
 					}
 					
 					
 					#********** VALIDATE IMAGE HEIGHT **********#
 					if( $imageHeight > $imageMaxHeight ) {
 						// 4. Fehlerfall (Bildhöhe zu groß)
-						return array( 'imagePath' => NULL, 'imageError' => "Die Bildhöhe darf maximal $imageMaxHeight Pixel betragen!" );
+						return array( 'imagePath' => NULL, 'imageError' => "The image height may not exceed $imageMaxHeight pixels!" );
 					}
 					
 					
 					#********** VALIDATE FILE SIZE **********#
 					if( $fileSize > $imageMaxSize ) {
 						// 5. Fehlerfall (Datei zu groß)
-						return array( 'imagePath' => NULL, 'imageError' => "Die Dateigröße darf maximal " . $imageMaxSize/1024 . "kB betragen!" );
+						return array( 'imagePath' => NULL, 'imageError' => "The file size may not exceed " . $imageMaxSize/1024 . "KB!" );
 					
 					} // VALIDATE PLAUSIBILITY OF FILE HEADER END
 					#**************************************************************************#
@@ -436,13 +436,13 @@ if(DEBUG_F)		echo "<p class='debug validateImageUpload value'><b>Line " . __LINE
 					*/
 					if( @move_uploaded_file($fileTemp, $fileTarget) === false ) {
 						// 6. Fehlerfall (Bild kann nicht verschoben werden)
-if(DEBUG_F)			echo "<p class='debug err validateImageUpload'><b>Line " . __LINE__ . "</b>: FEHLER beim Verschieben des Bildes nach <i>'$fileTarget'</i>! <i>(" . basename(__FILE__) . ")</i></p>\n";				
+if(DEBUG_F)			echo "<p class='debug err validateImageUpload'><b>Line " . __LINE__ . "</b>: ERROR while moving the image to  <i>'$fileTarget'</i>! <i>(" . basename(__FILE__) . ")</i></p>\n";				
 						// TODO: Entrag in ErrorLog / Email an Sysadmin
-						return array( 'imagePath' => NULL, 'imageError' => 'Es ist ein Fehler aufgetreten! Bitte kontaktieren Sie unseren Support.' );
+						return array( 'imagePath' => NULL, 'imageError' => 'An error occurred! Please contact our support.' );
 						
 					} else {
 						// Erfolgsfall
-if(DEBUG_F)			echo "<p class='debug ok validateImageUpload'><b>Line " . __LINE__ . "</b>: Bild erfolgreich nach <i>'$fileTarget'</i> verschoben. <i>(" . basename(__FILE__) . ")</i></p>\n";				
+if(DEBUG_F)			echo "<p class='debug ok validateImageUpload'><b>Line " . __LINE__ . "</b>: Image successfully moved to <i>'$fileTarget'</i> verschoben. <i>(" . basename(__FILE__) . ")</i></p>\n";				
 						return array( 'imagePath' => $fileTarget, 'imageError' => NULL);
 					}
 					// 4. MOVE IMAGE TO FINAL DESTINATION END
