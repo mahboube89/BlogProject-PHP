@@ -38,7 +38,7 @@
 
             #╔═══════════════════════════════════════════════════════╗
             #║																	      ║
-            #║          ---| LOGIN FORM PROCESS |---          ║
+            #║          ---| LOGIN FORM PROCESS |---          			║
             #║																	      ║
             #╚═══════════════════════════════════════════════════════╝
 
@@ -103,7 +103,7 @@ if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database op
                   $PDO = dbConnect('blogprojekt');
 
 			         //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
-                  $sql = 'SELECT userPassword FROM users
+                  $sql = 'SELECT userID, userPassword FROM users
 									WHERE userEmail = :userEmail';
 
                   $placeholders = array( 'userEmail' => $userEmail );
@@ -167,11 +167,41 @@ if(DEBUG)	      		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Passwo
 
 								//══════════----> LOGIN PROCESS START... <----═════════
 if(DEBUG)	      		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Starting login process after validation...<i>(" . basename(__FILE__) . ")</i></p>\n";
+								
 
 
-								//══════════----> REDIRECT TO DASHBOARD PAGE <----═════════
-								// header('LOCATION: ./dashboard.php');
-								//══════════----> DON'T SHOW LOGIN FORM <----═════════
+								//══════════----> PREPARE SESSSION <----═════════
+
+								session_name('wwwblogprojektmahboubede');
+
+								if( session_start() === false) {
+if(DEBUG)	      			echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: Login is currently not possible! Please check if cookies are enabled in your browser! <i>(" . basename(__FILE__) . ")</i></p>\n";
+									$loginError = 'Login is not possible! Please check if in your browser are cookies activ!';
+
+								} else {
+
+if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Session has been successfully started. <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+									//══════════----> SAVE USER DATA INTO SESSION FILE <----═════════
+
+									$_SESSION['ID'] = $userInfos['userID'];
+
+if(DEBUG_A)						echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+if(DEBUG_A)						print_r($_SESSION);					
+if(DEBUG_A)						echo "</pre>";
+
+
+
+
+									//══════════----> REDIRECT TO DASHBOARD PAGE <----═════════
+									header('LOCATION: ./dashboard.php');
+
+
+									//══════════----> DON'T SHOW LOGIN FORM <----═════════
+
+								} // LOGIN PROCESS AND PREPARE SESSSION END
+
+								
 
 							} // PASSWORD VALIDATE END
 
