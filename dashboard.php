@@ -48,9 +48,9 @@
             session_start();
 
 
-// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-// if(DEBUG_A)	print_r($_SESSION);					
-// if(DEBUG_A)	echo "</pre>";
+if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+if(DEBUG_A)	print_r($_SESSION);					
+if(DEBUG_A)	echo "</pre>";
 
 
             //══════════----> CHECK FOR VALID LOGIN <----═════════
@@ -115,7 +115,10 @@ if(DEBUG)         echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 
 			      //══════════----> DB-Step-4 : Daten proccess <----═════════
 					// Get user data from DB
-					$userInfos = $PDOStatement->fetch(PDO::FETCH_ASSOC);
+					$userInfos     = $PDOStatement->fetch(PDO::FETCH_ASSOC);
+
+               $userFirstName = $userInfos['userFirstName'];
+               $userLastName  = $userInfos['userLastName'];
 
                //══════════----> CLOSE DB CONNECTION <----═════════ 
                dbClose($PDO, $PDOStatement);
@@ -339,9 +342,48 @@ if(DEBUG)	         echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Close th
             }	// NEW CATEGORY FORM PROCESS END
 
 
-# ══════════════════════════════════════════════════════════════════════════════════════════════════
+# ==================================================================================================
 
 
+            #╔═══════════════════════════════════════════════════════╗
+            #║																	      ║
+            #║       ---| FETCH CATEGORY LABELS FORM DB |---         ║
+            #║																	      ║
+            #╚═══════════════════════════════════════════════════════╝
+
+			   //══════════----> DATABASE OPERATIONS <----═════════
+if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+			   //══════════----> DB-Step-1 : Connet to DB <----═════════
+            $PDO = dbConnect('blogprojekt');
+
+			   //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
+            $sql = 'SELECT * FROM categories';
+
+            $placeholders = array();
+
+
+			   //══════════----> DB-Step-3 : Prepared Statements <----═════════
+            try {
+               // Prepare: SQL-Statement vorbereiten
+               $PDOStatement = $PDO->prepare($sql);
+               
+               // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
+               $PDOStatement->execute($placeholders);
+               // showQuery($PDOStatement);
+               
+            } catch(PDOException $error) {
+if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
+				}
+
+            $categoriesArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$categoriesArray <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($categoriesArray);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+# ==================================================================================================
 #				╔═════════════════════════════════════════════════════╗
 #				║																	   ║
 #				║        ---| NEW POST BLOG FORM PROCESS |----        ║
@@ -402,7 +444,7 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
 			<div class="dashboard-header" >
 
             <div class="greeting">
-               <p>Welcome Back <b><?= $userInfos['userFirstName'] ?> <?= $userInfos['userLastName'] ?> !</b></p>
+               <p>Welcome Back <b><?= $userFirstName ?> <?= $userLastName ?> !</b></p>
             </div>
 
 				<ul class="nav">
@@ -448,16 +490,19 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
                <!-- ========== NEW BLOG FORM START ========== -->  
                <div class="box new-post">
                   
-                  <form action="" method="post" >
+                  <form action="" method="post" enctype="multipart/form-data" >
 
                      <!-- Hidden input to differentiate this form submission from new category from -->
                      <input type="hidden" name="formType" value="newPost">
 
                      <!-- Category selection -->
                      <select name="categorySelection" class="cat-selection">
-                        <option value="cat1">Cat-1</option>
-                        <option value="cat2">Cat-2</option>
-                        <option value="cat3">Cat-3</option>
+
+                        <?php foreach( $categoriesArray AS $category) : ?>
+                           <option value="<?= $category['catID'] ?>" <?php if($categorySelection == $category['catLabel']) echo 'selected' ?> ><?= $category['catLabel'] ?></option>
+
+                        <?php endforeach ?>
+
                      </select>
 
                      <!-- Headline -->

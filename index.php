@@ -251,7 +251,52 @@ if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout pr
 							} // Branch based on the permitted value END
 				
 					} // LOGOUT PROCESS-URL PARAMETER
-				
+
+
+
+# ==================================================================================================
+
+
+            #╔═══════════════════════════════════════════════════════╗
+            #║																	      ║
+            #║       ---| FETCH CATEGORY LABELS FORM DB |---         ║
+            #║																	      ║
+            #╚═══════════════════════════════════════════════════════╝
+
+			   //══════════----> DATABASE OPERATIONS <----═════════
+				if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+			   //══════════----> DB-Step-1 : Connet to DB <----═════════
+            $PDO = dbConnect('blogprojekt');
+
+			   //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
+            $sql = 'SELECT * FROM categories';
+
+            $placeholders = array();
+
+
+			   //══════════----> DB-Step-3 : Prepared Statements <----═════════
+            try {
+               // Prepare: SQL-Statement vorbereiten
+               $PDOStatement = $PDO->prepare($sql);
+               
+               // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
+               $PDOStatement->execute($placeholders);
+               // showQuery($PDOStatement);
+               
+            } catch(PDOException $error) {
+if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
+				}
+
+
+				$categoriesArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$categoriesArray <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($categoriesArray);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+# ==================================================================================================				
 
 
 # ══════════════════════════════════════════════════════════════════════════════════════════════════
@@ -277,7 +322,7 @@ if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout pr
 		<header class="container">
 			
 			<!-- ========== MENU START ========== -->
-			<div class="header-menu hidden" >
+			<div class="header-menu" >
 
 				<ul class="nav">
 					<li class="nav-item"><a class="nav-link" href="?action=logout">Logout</a></li>
@@ -321,7 +366,7 @@ if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout pr
 		</header>
 		<!-- ---------- HEADER END ----------- -->
 		
-		<a href="dashboard.php">Dashboard</a>
+
 
 		<!-- ========== CONTENT START ========== -->
 		<main class="container">
@@ -465,26 +510,15 @@ if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout pr
 							</div>
 
 							<ul class="cat-list">
-								<li>
-									<a class="category" href="#">
-										<h5 class="cat-title">Design</h5>
-										<h5 class="cat-quantity">12</h5>
-									</a>
-								</li>
-								<li>
-									<a class="category" href="#">
-										<h5 class="cat-title">Design</h5>
-										<h5 class="cat-quantity">12</h5>
-									</a>
-								</li>
-								<li>
-									<a class="category" href="#">
-										<h5 class="cat-title">Design</h5>
-										<h5 class="cat-quantity">12</h5>
-									</a>
-								</li>
-								
-								
+
+								<?php foreach( $categoriesArray as $category ) : ?>
+									<li>
+										<a class="category" href="?action=showCategory&id=<?= $category['catID'] ?>">
+											<h5 class="cat-title"><?= $category['catLabel'] ?></h5>
+											<h5 class="cat-quantity">12</h5>
+										</a>
+									</li>
+								<?php endforeach ?>
 							</ul>
 
 							
