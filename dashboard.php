@@ -23,10 +23,20 @@
 
             //══════════----> VARIABLEN INITIALISIEREN <----═════════
 
-            $newCategoryName = NULL;
-            $errorNewCategoryName = NULL;
+            //----> Category form section
+            $newCategoryName           = NULL;
+            $errorNewCategoryName      = NULL;
+            $addCategoryUserMessage    = NULL;
 
-            $addCategoryUserMessage = NULL;
+            //----> Blog form section
+            $validAlignments = ['alignLeft', 'alignRight'];
+            $categoryPlaceholder = "Please add a new category via the category form";
+            $categorySelection         = NULL;
+            $postHeadline              = NULL;
+            $imageAlignment            = NULL;
+            $postContent               = NULL;
+            $addPostUserMessage        = NULL;
+            $errorCategorySelection    = NULL;
 
 
 
@@ -48,9 +58,9 @@
             session_start();
 
 
-if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-if(DEBUG_A)	print_r($_SESSION);					
-if(DEBUG_A)	echo "</pre>";
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_SESSION);					
+// if(DEBUG_A)	echo "</pre>";
 
 
             //══════════----> CHECK FOR VALID LOGIN <----═════════
@@ -173,6 +183,7 @@ if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout proc
 
                   // ----> 2. Redirect user to index page
                   header('LOCATION: ./');
+
 
                   exit();
 
@@ -325,9 +336,7 @@ if(DEBUG)	            echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Th
                      } // CHECK IF CATEGORY HAS BEEN SUCCESSFULLY SAVED IN DB END
 
 			            //══════════----> CLOSE DB CONNECTION <----═════════ 
-if(DEBUG)	         echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Close the DB connection...<i>(" . basename(__FILE__) . ")</i></p>\n";
-
-                     //TODO: dbClose($PDO, $PDOStatement); 
+                      dbClose($PDO, $PDOStatement); 
 
 
 			            //══════════----> EMPTY CATEGORY FORM FIELD  <----═════════                      
@@ -350,6 +359,7 @@ if(DEBUG)	         echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Close th
             #║       ---| FETCH CATEGORY LABELS FORM DB |---         ║
             #║																	      ║
             #╚═══════════════════════════════════════════════════════╝
+
 
 			   //══════════----> DATABASE OPERATIONS <----═════════
 if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
@@ -376,14 +386,24 @@ if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operatio
 if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
 				}
 
+
+            //══════════----> DB-Step-3 : Daten proccess <----═════════
+            //----> Save categories in an array
             $categoriesArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
+
+            //══════════----> CLOSE DB CONNECTION <----═════════ 
+            dbClose($PDO, $PDOStatement);
 
 // if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$categoriesArray <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
 // if(DEBUG_A)	print_r($categoriesArray);					
 // if(DEBUG_A)	echo "</pre>";
 
 
+
 # ==================================================================================================
+
+
+
 #				╔═════════════════════════════════════════════════════╗
 #				║																	   ║
 #				║        ---| NEW POST BLOG FORM PROCESS |----        ║
@@ -393,29 +413,71 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 
 #				══════════----> POST ARRAY PREVIEW <----═════════
 
-// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_POST <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-// if(DEBUG_A)	print_r($_POST);					
-// if(DEBUG_A)	echo "</pre>";
+if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_POST <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+if(DEBUG_A)	print_r($_POST);					
+if(DEBUG_A)	echo "</pre>";
 
 #				══════════----> STEP-1 FORM: Check if the form has been submitted <----═════════
-            if(isset($_POST['formType']) && $_POST['formType'] === 'newPost') {
+            if( isset($_POST['formType']) AND $_POST['formType'] === 'newPost' ) {
 if(DEBUG)	   echo "<p class='debug'><b>Line " . __LINE__ . "</b>: New post form ist submitted... <i>(" . basename(__FILE__) . ")</i></p>\n";
 
 #				══════════----> STEP-2 FORM: Reading, defusing and debugging the passed form values <----═════════ 
 if(DEBUG)	   echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Values are reading, sanitizing...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
 
-               // $value = sanitizeString($_POST['value']);
-if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$value: $value <i>(" . basename(__FILE__) . ")</i></p>\n";
+               $categorySelection   = sanitizeString($_POST['categorySelection']);
+               $postHeadline        = sanitizeString($_POST['postHeadline']);
+               $imageAlignment      = sanitizeString($_POST['imageAlignment']);
+               $postContent         = sanitizeString($_POST['postContent']);
+
+if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$categorySelection: $categorySelection <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$postHeadline: $postHeadline <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$imageAlignment: $imageAlignment <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$postContent: $postContent <i>(" . basename(__FILE__) . ")</i></p>\n";
 
 
 #				══════════----> STEP-3 FORM: Validating the form values <----═════════
 if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are being validated...<i>(" . basename(__FILE__) . ")</i></p>\n";
-            }
-// 			   ---->[x] STEP-3-a FORM: Formally validate field values
-//					---->[x] STEP-3-b FORM: Display error message in the form
-//					---->[x] STEP-3-c FORM: Pre-assignment of form fields
-               // $errorvalue = validateInputString($value , minLength:3);
+
+
+               //---->[x] STEP-3-a FORM: Formally validate field values
+               //---->[x] STEP-3-b FORM: Display error message in the form
+               //---->[x] STEP-3-c FORM: Pre-assignment of form fields
+
+               //---> if Category list empty is or is no Category chosen
+               if( $categorySelection === $categoryPlaceholder OR !is_numeric($categorySelection )) {
+
+                  $errorCategorySelection = "Please select a valid category or add a new one.";
+
+               } else {
+
+                  $errorCategorySelection    = validateInputString($categorySelection);
+
+               }
+
+               $errorPostHeadline         = validateInputString($postHeadline );
+               $errorPostContent          = validateInputString($postContent , maxLength:5000);
+
+               //----> Validate image upload
+               
+
+
+
+
+            
+
+				   //══════════----> FORM-STEP-3-d : FINAL FORM VALIDATION <----═════════
+               //---->If successful, proceed to STEP 4 (save blog in DB); if not, the processing is aborted 
+
+
+
+
+
+
+
+
+            } // STEP-1 FORM: Check if the form has been submitted END
+
 # ══════════════════════════════════════════════════════════════════════════════════════════════════
 
 ?>
@@ -469,8 +531,16 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
          <!-- ========== SHOW USER SUCCESS MESSAGE START ========== -->
          <div class="message-wrapper">
 
-            <h3 class="post-message"></h3>
-            <h3 class="cat-message "><?= $addCategoryUserMessage ?></h3>
+            <?php if( isset($addCategoryUserMessage) === true ) : ?>
+
+               <!-- If new category was saved successfully -->
+               <h3 class="cat-message "><?= $addCategoryUserMessage ?></h3> 
+
+            <?php elseif(isset($addPostUserMessage) === true ) : ?>
+               <!-- If new post blog was saved successfully -->
+               <h3 class="post-message"><?= $addPostUserMessage ?></h3>
+
+            <?php endif ?>
 
          </div>
          <!-- ---------- SHOW USER SUCCESS MESSAGE END ----------- -->
@@ -496,19 +566,34 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
                      <input type="hidden" name="formType" value="newPost">
 
                      <!-- Category selection -->
+                     
+                     <span><?= $errorCategorySelection ?></span>
+
                      <select name="categorySelection" class="cat-selection">
 
-                        <?php foreach( $categoriesArray AS $category) : ?>
-                           <option value="<?= $category['catID'] ?>" <?php if($categorySelection == $category['catLabel']) echo 'selected' ?> ><?= $category['catLabel'] ?></option>
+                        <?php if(!empty($categoriesArray)) : ?>
 
-                        <?php endforeach ?>
+                           <?php foreach( $categoriesArray AS $category) : ?>
+                              <option value="<?= $category['catID'] ?>" <?php if($categorySelection == $category['catLabel']) echo 'selected' ?> ><?= $category['catLabel'] ?></option>
+
+                           <?php endforeach ?>
+
+                        <?php else : ?>
+
+                           <option value="<?= $categoryPlaceholder ?>"><?= $categoryPlaceholder ?></option>
+
+                        <?php endif ?>
 
                      </select>
 
+                     
+
                      <!-- Headline -->
-                     <div class="textbox">
-                        <input type="text" name="postHeadline" id="headline" placeholder="" autocomplete="off">
-                        <label for="headline">Enter headline here</label>
+                     <span><?= $errorPostHeadline ?></span>
+
+                     <div class="textbox-headline">
+                        <label   for="headline">Enter headline here</label>
+                        <input type="text" name="postHeadline" id="headline" placeholder="Enter headline here" autocomplete="off" value="<?= $postHeadline ?>" >
                      </div>
 
                      
@@ -517,19 +602,22 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
 
                         <div class="upload">
                            <!-- Image Upload -->  
-                           <input type="file" name="postImage" id="postImage" placeholder="Upload an image" autocomplete="off">
+                           <input type="file" name="postImagePath" >
 
                            <!-- Image alignment -->
                            <select name="imageAlignment" class="img-align-selection">
-                              <option value="alignLeft">align left</option>
-                              <option value="alignRight">align right</option>
+                              <?php foreach( $validAlignments as $validAlignment ) : ?>
+                                 <option value="<?= $validAlignment ?>"  <?php if($imageAlignment == $validAlignment) echo 'selected' ?>><?= $validAlignment ?></option>
+                              <?php endforeach ?>
+                           
                            </select>
 
                         </div>
                      </fieldset>
 
                      <!-- Textarea -->
-                     <textarea name="postContent" placeholder="Write your blog post here ..."></textarea>
+                     <span><?= $errorPostContent ?></span>
+                     <textarea name="postContent" placeholder="Write your blog post here ..." ><?= $postContent ?></textarea>
                      
 
                      <!-- Submit button -->

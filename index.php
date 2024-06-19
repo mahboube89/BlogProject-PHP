@@ -45,9 +45,9 @@
 
 				//══════════----> POST ARRAY PREVIEW <----═════════
 
-if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_POST <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-if(DEBUG_A)	print_r($_POST);					
-if(DEBUG_A)	echo "</pre>";
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_POST <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_POST);					
+// if(DEBUG_A)	echo "</pre>";
 
 
 				//══════════----> FORM-STEP-1 : Check if the form has been submitted <----═════════
@@ -245,6 +245,8 @@ if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout pr
 				
 								// ----> 2. Redirect user to index page
 								header('LOCATION: ./');
+if(DEBUG)	      		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: User is Logged out...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
 				
 								exit();
 				
