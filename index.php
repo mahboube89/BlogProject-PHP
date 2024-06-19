@@ -12,8 +12,55 @@
 				require_once('./include/form.inc.php');
 				require_once('./include/db.inc.php');
 
+# ==================================================================================================
 
 
+            #╔═════════════════════════════════════════════════╗
+            #║																	║
+            #║          ---| SECURE PAGE ACCESS |---           ║
+            #║																	║
+            #╚═════════════════════════════════════════════════╝
+
+if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Session start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+				//══════════----> PREPARE SESSSION <----═════════
+
+				session_name('wwwblogprojektmahboubede');
+
+            //══════════----> START SESSION <----═════════
+            session_start();
+
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_SESSION);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+            //══════════----> CHECK FOR VALID LOGIN <----═════════
+
+
+            if( isset($_SESSION['ID']) === false OR $_SESSION['IPAddress'] !== $_SERVER['REMOTE_ADDR'] ) {
+					
+
+// if(DEBUG)      echo "<p class='debug auth err'><b>Line " . __LINE__ . "</b>: Error: Invalid Session! <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+
+               //══════════----> DENY PAGE ACCESS <----═════════
+               session_destroy();
+
+					// $isUserLoggedIn = false;
+// if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$isUserLoggedIn: $isUserLoggedIn <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+
+            } else {
+if(DEBUG)      echo "<p class='debug auth ok'><b>Line " . __LINE__ . "</b>: Identification of the session was successful. <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+               //----> Generate a new session ID on every page refresh to enhance security
+               session_regenerate_id(true); 
+					// $isUserLoggedIn = true;
+
+// if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$isUserLoggedIn: $isUserLoggedIn <i>(" . basename(__FILE__) . ")</i></p>\n";
+				}
 
 # ==================================================================================================
 
@@ -34,7 +81,8 @@
 				$errorUserEmail	= NULL; // validateInputString output
 				$errorPassword		= NULL; // validateInputString output
 
-				$loginError			= NULL;				
+				$loginError			= NULL;
+			
 
 # ==================================================================================================
 
@@ -169,33 +217,40 @@ if(DEBUG)	      		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Passwo
 								//══════════----> LOGIN PROCESS START... <----═════════
 if(DEBUG)	      		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Starting login process after validation...<i>(" . basename(__FILE__) . ")</i></p>\n";
 								
-
-
 								//══════════----> PREPARE SESSSION <----═════════
 
-								session_name('wwwblogprojektmahboubede');
+								// session_name('wwwblogprojektmahboubede');
+
 
 								if( session_start() === false) {
+
 if(DEBUG)	      			echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: Login is currently not possible! Please check if cookies are enabled in your browser! <i>(" . basename(__FILE__) . ")</i></p>\n";
+									
 									$loginError = 'Login is not possible! Please check if in your browser are cookies activ!';
+									
 
 								} else {
 
 if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Session has been successfully started. <i>(" . basename(__FILE__) . ")</i></p>\n";
 
 									//══════════----> SAVE USER DATA INTO SESSION FILE <----═════════
-
+									
 									$_SESSION['ID']			= $userInfos['userID'];
-									$_SESSION['IPAddress']	= $_SERVER['SERVER_ADDR'];
+									$_SESSION['IPAddress'] 	= $_SERVER['REMOTE_ADDR'];
+									$_SESSION['isUserLoggedIn'] 	= true;
 
-if(DEBUG_A)						echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-if(DEBUG_A)						print_r($_SESSION);					
-if(DEBUG_A)						echo "</pre>";
+// if(DEBUG_A)						echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)						print_r($_SESSION);					
+// if(DEBUG_A)						echo "</pre>";
 
 									//══════════----> REDIRECT TO DASHBOARD PAGE <----═════════
-									header('LOCATION: ./dashboard.php');
+									
+									header('LOCATION: dashboard.php');
 
-									//══════════----> TODO: DON'T SHOW LOGIN FORM <----═════════
+
+									exit();
+
+							
 
 								} // LOGIN PROCESS AND PREPARE SESSSION EN								
 
@@ -247,7 +302,10 @@ if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout pr
 								session_destroy();
 				
 								// ----> 2. Redirect user to index page
+								
 								header('LOCATION: ./');
+								
+
 if(DEBUG)	      		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: User is Logged out...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
 				
@@ -326,19 +384,10 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 		<!-- ========== HEADER START ========== -->		
 		<header class="container">
 			
-			<!-- ========== MENU START ========== -->
-			<div class="header-menu" >
 
-				<ul class="nav">
-					<li class="nav-item"><a class="nav-link" href="?action=logout">Logout</a></li>
-					<li class="nav-item"><a class="nav-link" href="./dashboard.php">Dashboard</a></li>
-				</ul>
-
-			</div>
-			<!-- ---------- MENU END ----------- -->
 		
 			<!-- ========== LOGIN FORM START ========== -->
-			<?php if( !isset( $_SESSION['ID']) ) : ?>
+			<?php if( !isset($_SESSION['isUserLoggedIn'])  ) : ?>
 				<div class="login">
 					
 					<form class="form" action="" method="POST">
@@ -367,6 +416,19 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 					<span class="login-error"><?= $loginError ?></span>
 
 				</div>
+			<?php else : ?>
+
+				<!-- ========== MENU START ========== -->						
+				<div class="header-menu" >
+
+					<ul class="nav">
+						<li class="nav-item"><a class="nav-link" href="?action=logout">Logout</a></li>
+						<li class="nav-item"><a class="nav-link" href="dashboard.php">Dashboard</a></li>
+					</ul>
+
+				</div>
+				<!-- ---------- MENU END ----------- -->
+
 			<?php endif ?>
 			<!-- ---------- LOGIN FORM END ----------- -->
 		

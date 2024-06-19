@@ -15,6 +15,114 @@
 # ==================================================================================================
 
 
+
+            #╔═════════════════════════════════════════════════╗
+            #║																	║
+            #║          ---| SECURE PAGE ACCESS |---           ║
+            #║																	║
+            #╚═════════════════════════════════════════════════╝
+
+				//══════════----> PREPARE SESSSION <----═════════
+
+				session_name('wwwblogprojektmahboubede');
+
+            //══════════----> START SESSION <----═════════
+            session_start();
+
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_SESSION);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+            //══════════----> CHECK FOR VALID SESSION <----═════════
+
+
+            if(isset($_SESSION['ID']) === false OR $_SESSION['IPAddress'] !== $_SERVER['REMOTE_ADDR'] ) {
+if(DEBUG)      echo "<p class='debug auth err'><b>Line " . __LINE__ . "</b>: Error: Invslid Session! <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+
+               //══════════----> DENY PAGE ACCESS <----═════════
+               session_destroy();
+
+               //══════════----> REDIRECT TO INDEX PAGE <----═════════
+              
+
+               header('LOCATION: index.php');
+
+               //----> Terminate script execution as a security fallback
+               // exit(); 
+
+
+            } else {
+if(DEBUG)      echo "<p class='debug auth ok'><b>Line " . __LINE__ . "</b>: Identification of the session was successful. <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+               //----> Generate a new session ID on every page refresh to enhance security
+               session_regenerate_id(true); 
+
+
+               //══════════----> SHOW USER FIRSTNAME AND LASTNAME IN HEADER <----═════════
+
+               $userID = $_SESSION['ID'];
+            } // CHECK FOR VALID SESSION END
+
+
+# ==================================================================================================
+
+
+               //══════════----> FETCH USER DATA FROM DB <----═════════
+               #╔═════════════════════════════════════════════════════╗
+               #║																	    ║
+               #║           ---| DATABASE OPERATIONS |----            ║
+               #║																	    ║
+               #╚═════════════════════════════════════════════════════╝
+
+if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Fetch user data from DB...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+            //══════════----> DB-Step-1 : Connet to DB <----═════════
+            $PDO = dbConnect('blogprojekt');
+
+            //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
+            $sql = 'SELECT userFirstName, userLastName FROM users
+                     WHERE userID = :userID';
+
+            $placeholders = array('userID' => $userID);
+
+
+            //══════════----> DB-Step-3 : Prepared Statements <----═════════
+            try {
+               // Prepare: SQL-Statement vorbereiten
+               $PDOStatement = $PDO->prepare($sql);
+               
+               // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
+               $PDOStatement->execute($placeholders);
+               // showQuery($PDOStatement);
+               
+            } catch(PDOException $error) {
+if(DEBUG)         echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
+            }
+
+            //══════════----> DB-Step-4 : Daten proccess <----═════════
+            // Get user data from DB
+            $userInfos     = $PDOStatement->fetch(PDO::FETCH_ASSOC);
+
+            $userFirstName = $userInfos['userFirstName'];
+            $userLastName  = $userInfos['userLastName'];
+
+            //══════════----> CLOSE DB CONNECTION <----═════════ 
+            dbClose($PDO, $PDOStatement);
+
+// if(DEBUG_A)		echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$userInfos <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)		print_r($userInfos);					
+// if(DEBUG_A)		echo "</pre>";
+
+
+            
+
+
+# ==================================================================================================
+
+
             #╔═══════════════════════════════════════════════════════╗
             #║																		   ║
             #║          ---| VARIABLEN INITIALISIEREN |---           ║
@@ -48,107 +156,6 @@
 
 
 # ==================================================================================================
-
-
-            #╔═════════════════════════════════════════════════╗
-            #║																	║
-            #║          ---| SECURE PAGE ACCESS |---           ║
-            #║																	║
-            #╚═════════════════════════════════════════════════╝
-
-				//══════════----> PREPARE SESSSION <----═════════
-
-				session_name('wwwblogprojektmahboubede');
-
-            //══════════----> START SESSION <----═════════
-            session_start();
-
-
-// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-// if(DEBUG_A)	print_r($_SESSION);					
-// if(DEBUG_A)	echo "</pre>";
-
-
-            //══════════----> CHECK FOR VALID LOGIN <----═════════
-
-
-            if(isset($_SESSION['ID']) === false OR $_SESSION['IPAddress'] !== $_SERVER['SERVER_ADDR'] ) {
-if(DEBUG)      echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: Login validation is currently not possible! <i>(" . basename(__FILE__) . ")</i></p>\n";
-
-
-               //══════════----> DENY PAGE ACCESS <----═════════
-               session_destroy();
-
-               //══════════----> REDIRECT TO INDEX PAGE <----═════════
-               header('LOCATION: ./');
-
-               //----> Terminate script execution as a security fallback
-               exit(); 
-
-
-            } else {
-if(DEBUG)      echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Login has been successfully validated. <i>(" . basename(__FILE__) . ")</i></p>\n";
-
-               //----> Generate a new session ID on every page refresh to enhance security
-               session_regenerate_id(true); 
-
-
-               //══════════----> SHOW USER FIRSTNAME AND LASTNAME IN HEADER <----═════════
-
-               $userID = $_SESSION['ID'];
-
-               //══════════----> FETCH USER DATA FROM DB <----═════════
-               #╔═════════════════════════════════════════════════════╗
-               #║																	    ║
-               #║           ---| DATABASE OPERATIONS |----            ║
-               #║																	    ║
-               #╚═════════════════════════════════════════════════════╝
-
-if(DEBUG)	   echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Fetch user data from DB...<i>(" . basename(__FILE__) . ")</i></p>\n";
-
-               //══════════----> DB-Step-1 : Connet to DB <----═════════
-               $PDO = dbConnect('blogprojekt');
-
-               //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
-               $sql = 'SELECT userFirstName, userLastName FROM users
-                        WHERE userID = :userID';
-
-               $placeholders = array('userID' => $userID);
-
-
-               //══════════----> DB-Step-3 : Prepared Statements <----═════════
-               try {
-                  // Prepare: SQL-Statement vorbereiten
-                  $PDOStatement = $PDO->prepare($sql);
-                  
-                  // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
-                  $PDOStatement->execute($placeholders);
-                  // showQuery($PDOStatement);
-                  
-               } catch(PDOException $error) {
-if(DEBUG)         echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
-				   }
-
-			      //══════════----> DB-Step-4 : Daten proccess <----═════════
-					// Get user data from DB
-					$userInfos     = $PDOStatement->fetch(PDO::FETCH_ASSOC);
-
-               $userFirstName = $userInfos['userFirstName'];
-               $userLastName  = $userInfos['userLastName'];
-
-               //══════════----> CLOSE DB CONNECTION <----═════════ 
-               dbClose($PDO, $PDOStatement);
-
-// if(DEBUG_A)		echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$userInfos <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-// if(DEBUG_A)		print_r($userInfos);					
-// if(DEBUG_A)		echo "</pre>";
-
-
-            } // CHECK FOR VALID LOGIN END
-
-
-# ==================================================================================================
-
 
             #╔═══════════════════════════════════════════════════════╗
             #║																		   ║
@@ -621,6 +628,7 @@ if(DEBUG) 		            echo "<p class='debug db err'><b>Line " . __LINE__ . "</
             } // STEP-1 FORM: Check if the form has been submitted END
 
 # ══════════════════════════════════════════════════════════════════════════════════════════════════
+
 
 ?>
 
