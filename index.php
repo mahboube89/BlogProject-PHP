@@ -28,8 +28,11 @@
 
 				//══════════----> VARIABLEN INITIALISIEREN <----═════════
 
-				// $errorUserEmail	= NULL;
-				// $errorPassword		= NULL;
+				//----> Login form section
+				$userEmail			= NULL;
+				$password			= NULL;
+				$errorUserEmail	= NULL; // validateInputString output
+				$errorPassword		= NULL; // validateInputString output
 
 				$loginError			= NULL;				
 
@@ -335,34 +338,36 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 			<!-- ---------- MENU END ----------- -->
 		
 			<!-- ========== LOGIN FORM START ========== -->
-			<div class="login">
-				
-				<form class="form" action="" method="POST">
+			<?php if( !isset( $_SESSION['ID']) ) : ?>
+				<div class="login">
+					
+					<form class="form" action="" method="POST">
 
-					<!-- Hidden input to differentiate from -->
-					<input type="hidden" name="formType" value="loginForm">
+						<!-- Hidden input to differentiate from -->
+						<input type="hidden" name="formType" value="loginForm">
 
-					<!-- Email input box -->
-					<div class="textbox">
-						<input type="text" name="f1" id="email" placeholder="" >
-						<label for="email">Enter your email</label>
-					</div>
+						<!-- Email input box -->
+						<div class="textbox">
+							<input type="text" name="f1" id="email" placeholder="" >
+							<label for="email">Enter your email</label>
+						</div>
 
-					<!-- Password input box -->
-					<div class="textbox">
-						<input type="password" name="f2" id="password" placeholder="" >
-						<label for="password">Enter your password</label>
-					</div>
+						<!-- Password input box -->
+						<div class="textbox">
+							<input type="password" name="f2" id="password" placeholder="" >
+							<label for="password">Enter your password</label>
+						</div>
 
-					<!-- Submit button for the form -->
-					<button type="submit" class="login-submit" >LOGIN</button>
+						<!-- Submit button for the form -->
+						<button type="submit" class="login-submit" >LOGIN</button>
 
-				</form>
+					</form>
 
-				<!-- Placeholder for error messages -->
-				<span class="login-error"><?= $loginError ?></span>
+					<!-- Placeholder for error messages -->
+					<span class="login-error"><?= $loginError ?></span>
 
-			</div>
+				</div>
+			<?php endif ?>
 			<!-- ---------- LOGIN FORM END ----------- -->
 		
 		</header>

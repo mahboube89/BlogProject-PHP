@@ -32,7 +32,7 @@
 
 				
 #				══════════----| STANDARD PATHS CONFIGURATION |----═════════				
-				define('IMAGE_UPLOAD_PATH', 				'./uploads/userimages/');
+				define('IMAGE_UPLOAD_PATH', 				'./uploads/userImages/');
 				define('AVATAR_DUMMY_PATH', 				'../css/images/avatar_dummy.png');
 
 				

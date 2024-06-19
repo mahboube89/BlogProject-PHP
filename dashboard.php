@@ -31,12 +31,18 @@
             //----> Blog form section
             $validAlignments = ['alignLeft', 'alignRight'];
             $categoryPlaceholder = "Please add a new category via the category form";
+
             $categorySelection         = NULL;
             $postHeadline              = NULL;
             $imageAlignment            = NULL;
+            $imageAlignment            = NULL; 
             $postContent               = NULL;
             $addPostUserMessage        = NULL;
+
             $errorCategorySelection    = NULL;
+            $errorPostHeadline         = NULL;
+            $errorImageUpload          = NULL;
+            $errorPostContent          = NULL;
 
 
 
@@ -411,6 +417,7 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 #				╚═════════════════════════════════════════════════════╝
 
 
+
 #				══════════----> POST ARRAY PREVIEW <----═════════
 
 if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_POST <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
@@ -445,7 +452,7 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
                //---->[x] STEP-3-c FORM: Pre-assignment of form fields
 
                //---> if Category list empty is or is no Category chosen
-               if( $categorySelection === $categoryPlaceholder OR !is_numeric($categorySelection )) {
+               if( $categorySelection === $categoryPlaceholder OR !is_numeric( $categorySelection )) {
 
                   $errorCategorySelection = "Please select a valid category or add a new one.";
 
@@ -455,26 +462,161 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
 
                }
 
-               $errorPostHeadline         = validateInputString($postHeadline );
-               $errorPostContent          = validateInputString($postContent , maxLength:5000);
-
-               //----> Validate image upload
+               $errorPostHeadline         = validateInputString( $postHeadline );
+               $errorPostContent          = validateInputString( $postContent , maxLength:5000 );
                
 
+               //══════════----> FORM-STEP-3-d : FINAL FORM VALIDATION FOR REQUIRED FIELDS<----═════════
+               if( $errorCategorySelection OR $errorPostHeadline OR $errorPostContent  ) {
+
+if(DEBUG)	      echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: There are still errors in the form! <i>(" . basename(__FILE__) . ")</i></p>\n";				
+
+                  
+               } else {
+if(DEBUG)         echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: No error in required fields. <i>(" . basename(__FILE__) . ")</i></p>\n";				
 
 
 
-            
-
-				   //══════════----> FORM-STEP-3-d : FINAL FORM VALIDATION <----═════════
-               //---->If successful, proceed to STEP 4 (save blog in DB); if not, the processing is aborted 
+                  //══════════----> UPLOAD IMAGE PROCESS <----═════════
 
 
+// if(DEBUG_A)	      echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_FILES <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	      print_r($_FILES);					
+// if(DEBUG_A)	      echo "</pre>";
+
+                  //----> Check if a image is uploaded
+                  if( $_FILES['postImagePath']['tmp_name'] === '') {
+if(DEBUG)	         echo "<p class='debug hint'><b>Line " . __LINE__ . "</b>: No image is uploaded! <i>(" . basename(__FILE__) . ")</i></p>\n";				
+
+
+                  } else {
+if(DEBUG)            echo "<p class='debug hint'><b>Line " . __LINE__ . "</b>: Image upload is active. <i>(" . basename(__FILE__) . ")</i></p>\n";	
+
+                     $validatedImageResult = validateImageUpload( $_FILES['postImagePath']['tmp_name'] );
+
+// if(DEBUG_A)	         echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$validatedImageResult <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	         print_r($validatedImageResult);					
+// if(DEBUG_A)	         echo "</pre>";
+
+                     //----> Validate image uploaded
+                     if( $validatedImageResult['imageError'] !== NULL ) {
+
+if(DEBUG)	            echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error bei upload image: <i> $validatedImageResult[imageError] </i> ! <i>(" . basename(__FILE__) . ")</i></p>\n";	
+                        
+                        // Show error to user
+                        $errorImageUpload = $validatedImageResult['imageError'];
+
+                     } else {
+if(DEBUG)               echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Image has been successfully uploaded in path:'<i>$validatedImageResult[imagePath]</i>' . <i>(" . basename(__FILE__) . ")</i></p>\n";	
+
+                        $postImagePath = $validatedImageResult['imagePath'];
+
+                        //----> Image alignment Validation
+                        $errorImageAlignment = validateInputString( $imageAlignment );
+
+
+                        //----> Check if a image Alignment is valid
+
+                        if( $imageAlignment !== 'alignLeft' AND $imageAlignment !== 'alignRight' AND $errorImageAlignment !== NULL ) {
+
+if(DEBUG)	               echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: Invalid alignment image </i> ! <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+                           $errorImageUpload = "Invalid image alignment selected.";
+
+                        } // Check if a image Alignment is valid END
+
+
+                        //══════════----> SAVE NEW POST BLOG INTO DB <----═════════
+
+                        #╔═════════════════════════════════════════════════════╗
+                        #║																	    ║
+                        #║           ---| DATABASE OPERATIONS |----            ║
+                        #║																	    ║
+                        #╚═════════════════════════════════════════════════════╝
+
+
+if(DEBUG)	            echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+                        //══════════----> DB-Step-1 : Connet to DB <----═════════
+                        $PDO = dbConnect('blogprojekt');
+
+                        //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
+                        $sql = 'INSERT INTO blogs (blogHeadline, blogImagePath, blogImageAlignment, blogContent , catID, userID)
+                                 VALUES (:blogHeadline, :blogImagePath, :blogImageAlignment, :blogContent , :catID, :userID)';
+
+                        $placeholders = array( 
+                                                'blogHeadline'          => $postHeadline,
+                                                'blogImagePath'         => $postImagePath,
+                                                'blogImageAlignment'    => $imageAlignment,
+                                                'blogContent'           => $postContent,
+                                                'catID'                 => $categorySelection,
+                                                'userID'                => $userID,
+                                             );
+
+
+                        //══════════----> DB-Step-3 : Prepared Statements <----═════════
+                        try {
+                           // Prepare: SQL-Statement vorbereiten
+                           $PDOStatement = $PDO->prepare($sql);
+                           
+                           // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
+                           $PDOStatement->execute($placeholders);
+                           // showQuery($PDOStatement);
+                           
+                        } catch(PDOException $error) {
+if(DEBUG) 		            echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
+				            }
+
+
+
+                        //══════════----> DB-Step-4 : Daten proccess <----═════════
+
+                        //══════════----> CHECK IF NEW POST HAS BEEN SUCCESSFULLY SAVED IN DB <----═════════
+                        $rowCount = $PDOStatement->rowCount();
+   if(DEBUG_V)		      echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$rowCount: $rowCount <i>(" . basename(__FILE__) . ")</i></p>\n";
+                        
+                        if( $rowCount !== 1) {
+   if(DEBUG)	            echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: Failed to save new post in the database! <i>(" . basename(__FILE__) . ")</i></p>\n";				
+
+                           $addPostUserMessage = "An error occurred while saving the post. Please try again later.";
+                           //TODO: dbClose($PDO, $PDOStatement);?
+
+                        } else {
+                           // Display the ID of the last inserted record after saving the new blog post to the DB.
+                           $newPostID = $PDO->lastInsertID();
+
+   if(DEBUG)	            echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: The new Post with ID: $newPostID has been successfully saved. <i>(" . basename(__FILE__) . ")</i></p>\n";				
+                           
+                           $addPostUserMessage = "The new blog post has been successfully saved.";
+
+                        } // CHECK IF NEW POST HAS BEEN SUCCESSFULLY SAVED IN DB END
+
+                        //══════════----> CLOSE DB CONNECTION <----═════════ 
+                        dbClose($PDO, $PDOStatement); 
+
+
+                        //══════════----> EMPTY NEW POST FORM FIELD  <----═════════
+
+                        $categorySelection         = NULL;
+                        $postHeadline              = NULL;
+                        $imageAlignment            = NULL;
+                        $imageAlignment            = NULL; 
+                        $postContent               = NULL;
+                     
+
+                        $errorCategorySelection    = NULL;
+                        $errorPostHeadline         = NULL;
+                        $errorImageUpload          = NULL;
+                        $errorPostContent          = NULL;
 
 
 
 
+                     } // Validate image uploaded
 
+                  } // Check if a image is uploaded END
+
+               } // FORM-STEP-3-d : FINAL FORM VALIDATION FOR REQUIRED FIELDS END
 
             } // STEP-1 FORM: Check if the form has been submitted END
 
@@ -597,11 +739,12 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
                      </div>
 
                      
+                     <span><?= $errorImageUpload ?></span> 
                      <fieldset class="img-upload-wrapper">
                         <legend>&nbsp;Featured Image&nbsp;</legend>
 
                         <div class="upload">
-                           <!-- Image Upload -->  
+                           <!-- Image Upload --> 
                            <input type="file" name="postImagePath" >
 
                            <!-- Image alignment -->
