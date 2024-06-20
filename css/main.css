@@ -412,7 +412,7 @@ input:focus {
 	display: flex;
    flex-wrap: wrap;
    margin-top: 25px;
-   margin-right: -15px;
+   margin-right: -45px;
    margin-left: -15px;
 }
 
@@ -449,6 +449,11 @@ h1 {
 	font-size: 16px;
    /* padding-bottom: 0; */
 }
+
+
+.category-title {height: 4.5rem}
+
+
 
 .section-title h5 {
    color: #111;
@@ -506,13 +511,25 @@ h1 {
 
 .cat-list {
    height:fit-content;
-   margin-top: 0;
+   margin-top: 20px;
    padding: 1rem;
    border: 1px solid rgba(30, 144, 255, 0.3);
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
+.cat-active {
+   background-color: #006699;
+
+}
+
+.category.cat-active .cat-title,
+.category.cat-active .cat-quantity {
+    color: #fff; 
+}
+.category.cat-active .cat-quantity {
+   border: 1px solid #fff;
+}
 .cat-title {
    font-size: 1em;
     font-weight: 700;
@@ -628,7 +645,7 @@ h1 {
    display: inline-block;
    padding: 10px 10px;
    border-radius: 40px;
-   font-size: 0.6rem;
+   font-size: 0.7rem;
    letter-spacing: 1px;
 }
 
@@ -661,11 +678,18 @@ h1 {
    object-fit: contain;
 
 }
-.left {
+
+.none {
+   width: 0;
+   height: 0;
+   
+}
+
+.alignLeft {
    float: left;
    
 }
-.right {
+.alignRight {
    float: right;
 }
 
@@ -690,11 +714,22 @@ main h1{
    padding: 10px;
    min-width: fit-content;
    min-height: fit-content;
+   margin: 0 auto;
 }
 
 .message-wrapper{
    display: flex;
    justify-content: space-between;
+}
+
+form > span {
+   color: #C40D43;
+   background-color: #F8CD73;
+   width: fit-content;
+   padding: 2px 5px;
+   font-size: 0.8rem;
+   display: inline-block;
+   margin-bottom: 5px;
 }
 /* 
    --- NEW CATEGORY FORM ---
@@ -704,6 +739,7 @@ main h1{
 .dashboard-header {
    display: flex;
    justify-content: flex-end;
+   align-items: center;
    gap: 2rem;
    border-bottom: 1px solid #e1e1e1;
    border-radius: 0;
@@ -711,6 +747,22 @@ main h1{
 
 .greeting {
    font-size: 0.9rem;
+   display: flex;
+   align-items: center;
+}
+
+.user-avatar {
+   width: 55px;
+   height: 55px;
+   margin:0 5px 0 0;
+   border: 1px solid #004356;
+   border-radius: 50%;
+
+}
+
+.user-avatar img{
+   width: 100%;
+   height: 100%;
 }
 
 .greeting b {
@@ -718,8 +770,15 @@ main h1{
 }
 
 .new-cat-container {
-   padding: 2rem 1rem;
+   padding: 3rem 1rem;
 }
+
+.new-cat-input:focus ~ label, .new-cat-input:not(:placeholder-shown) ~ label {
+   transform: translateY(-255%) scale(0.90); 
+   color: #004356;
+}
+
+
 
 .category-submit {
    width: 50%;
@@ -743,7 +802,7 @@ main h1{
    padding:3rem 1rem;
    margin-right: 3rem;
    min-width:400px ;
-   max-width:700px ;
+   max-width:750px ;
    
 }
 
@@ -758,6 +817,10 @@ main h1{
 .new-post input {
    width: 100%;
    
+}
+
+.textbox-headline {
+   width: 96%;
 }
 
 .textbox-headline input {
@@ -775,6 +838,7 @@ main h1{
 }
 
 .new-post select {
+   height: 45px;
    border-radius: 10px;
    background-color: #fff;
    border:1px solid rgba(30, 144, 255, 0.3);
@@ -796,20 +860,22 @@ main h1{
 .img-upload-wrapper {
    border: 1px solid rgba(30, 144, 255, 0.3);
    border-radius: 10px;
-   width: 96%;
+   /* width: 96%; */
    margin-bottom: 2rem;
+   padding: 1rem;
 }
 
 .upload {
    width: 100%;
    display: flex;
    gap: 1rem;
+   margin-top: 20px;
 }
 
 .new-post textarea {
    border: 1px solid rgba(30, 144, 255, 0.3);
    border-radius: 10px;
-   width: 100%;
+   width: 95%;
    height: 300px;
    padding: 10px;
    outline: none;

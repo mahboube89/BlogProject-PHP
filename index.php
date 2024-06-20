@@ -11,6 +11,7 @@
 				require_once('./include/config.inc.php');
 				require_once('./include/form.inc.php');
 				require_once('./include/db.inc.php');
+				require_once('./include/dateTime.inc.php');
 
 # ==================================================================================================
 
@@ -48,22 +49,15 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Session start...
                //══════════----> DENY PAGE ACCESS <----═════════
                session_destroy();
 
-					// $isUserLoggedIn = false;
-// if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$isUserLoggedIn: $isUserLoggedIn <i>(" . basename(__FILE__) . ")</i></p>\n";
-
-
             } else {
 if(DEBUG)      echo "<p class='debug auth ok'><b>Line " . __LINE__ . "</b>: Identification of the session was successful. <i>(" . basename(__FILE__) . ")</i></p>\n";
 
                //----> Generate a new session ID on every page refresh to enhance security
                session_regenerate_id(true); 
-					// $isUserLoggedIn = true;
 
-// if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$isUserLoggedIn: $isUserLoggedIn <i>(" . basename(__FILE__) . ")</i></p>\n";
 				}
 
 # ==================================================================================================
-
 
 
             #╔═══════════════════════════════════════════════════════╗
@@ -78,10 +72,13 @@ if(DEBUG)      echo "<p class='debug auth ok'><b>Line " . __LINE__ . "</b>: Iden
 				//----> Login form section
 				$userEmail			= NULL;
 				$password			= NULL;
+
 				$errorUserEmail	= NULL; // validateInputString output
 				$errorPassword		= NULL; // validateInputString output
 
-				$loginError			= NULL;
+				$loginError			= NULL; // Login errors
+
+				$errorLoadBlog		= NULL; // Error by load blogs
 			
 
 # ==================================================================================================
@@ -120,14 +117,14 @@ if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$passwo
 if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are being validated...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
 					//---->[x] FORM-STEP-3-a : Formally validate field values
-					//---->[x] FORM-STEP-3-b : Display detailed error messages in the debugger and a general error message to the user.
+					//---->[x] FORM-STEP-3-b : Display detailed error messages in deug and a general error message to the user.
 					//---->[-] FORM-STEP-3-c : Pre-assignment of form fields (Not for Login form)
 
 					$errorUserEmail = validateEmail($userEmail);
 					$errorPassword = validateInputString($password, minLength:4);
 
-if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$errorUserEmail: $errorUserEmail <i>(" . basename(__FILE__) . ")</i></p>\n";
-if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$errorPassword: $errorPassword <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_V)		echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: \$errorUserEmail: $errorUserEmail <i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG_V)		echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: \$errorPassword: $errorPassword <i>(" . basename(__FILE__) . ")</i></p>\n";
 
 
 					//══════════----> FORM-STEP-3-d : FINAL FORM VALIDATION <----═════════
@@ -143,9 +140,7 @@ if(DEBUG)	      echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: The form
 			         //══════════----> FORM-STEP-4 : Form values processing <----═════════
 			         //══════════----> FETCH USER DATA FROM DB <----═════════
                   #╔═════════════════════════════════════════════════════╗
-                  #║																	    ║
                   #║           ---| DATABASE OPERATIONS |----            ║
-                  #║																	    ║
                   #╚═════════════════════════════════════════════════════╝						
 if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
@@ -182,9 +177,9 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
                   dbClose($PDO, $PDOStatement);
 
 						//══════════----> DISPLAY USER DATA ARRAY <----═════════
-if(DEBUG_A)			echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$userInfos <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-if(DEBUG_A)			print_r($userInfos);					
-if(DEBUG_A)			echo "</pre>";
+// if(DEBUG_A)			echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$userInfos <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)			print_r($userInfos);					
+// if(DEBUG_A)			echo "</pre>";
 
 
 						//══════════----> 1.EMAIL VALIDATE <----═════════
@@ -219,8 +214,7 @@ if(DEBUG)	      		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Starting 
 								
 								//══════════----> PREPARE SESSSION <----═════════
 
-								// session_name('wwwblogprojektmahboubede');
-
+								// session_name('wwwblogprojektmahboubede'); // is already started
 
 								if( session_start() === false) {
 
@@ -228,15 +222,14 @@ if(DEBUG)	      			echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Erro
 									
 									$loginError = 'Login is not possible! Please check if in your browser are cookies activ!';
 									
-
 								} else {
 
 if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Session has been successfully started. <i>(" . basename(__FILE__) . ")</i></p>\n";
 
 									//══════════----> SAVE USER DATA INTO SESSION FILE <----═════════
 									
-									$_SESSION['ID']			= $userInfos['userID'];
-									$_SESSION['IPAddress'] 	= $_SERVER['REMOTE_ADDR'];
+									$_SESSION['ID']					= $userInfos['userID'];
+									$_SESSION['IPAddress'] 			= $_SERVER['REMOTE_ADDR'];
 									$_SESSION['isUserLoggedIn'] 	= true;
 
 // if(DEBUG_A)						echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
@@ -247,10 +240,7 @@ if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Sessi
 									
 									header('LOCATION: dashboard.php');
 
-
-									exit();
-
-							
+									exit();							
 
 								} // LOGIN PROCESS AND PREPARE SESSSION EN								
 
@@ -266,74 +256,25 @@ if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Sessi
 
 
             #╔═══════════════════════════════════════════════════════╗
-            #║																		   ║
-            #║        ---| LOGOUT PROCESS-URL PARAMETER |---         ║
-            #║																		   ║
-            #╚═══════════════════════════════════════════════════════╝
-
-
-				//══════════----> GET ARRAY PREVIEW <----═════════
-
-if(DEBUG_A)		echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_GET <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-if(DEBUG_A)		print_r($_GET);					
-if(DEBUG_A)		echo "</pre>";
-				
-				
-					//══════════----> URL-STEP-1 : Check if the url prameters is passed <----═════════
-				
-					if(isset($_GET['action']) === true ) {
-if(DEBUG)			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: URL parameter 'action' is passed...<i>(" . basename(__FILE__) . ")</i></p>\n";
-												
-				
-									//══════════----> URL-STEP-2 : Reading, defusing and debugging the passed URL-parameters <----═════════ 
-if(DEBUG)	  		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Parameters are reading, sanitizing...<i>(" . basename(__FILE__) . ")</i></p>\n";
-									
-						$action = sanitizeString($_GET['action']);
-if(DEBUG_V)			echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$action: $action <i>(" . basename(__FILE__) . ")</i></p>\n";
-								
-							//══════════----> URL-STEP-3 : Branch based on the permitted value of the URL parameter <----═════════         
-				
-							if( $action === 'logout') {
-				
-								//══════════----> URL-STEP-4 : Data Processing <----═════════ 
-if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout process start...<i>(" . basename(__FILE__) . ")</i></p>\n";
-				
-								// ----> 1. Delete session data
-								session_destroy();
-				
-								// ----> 2. Redirect user to index page
-								
-								header('LOCATION: ./');
-								
-
-if(DEBUG)	      		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: User is Logged out...<i>(" . basename(__FILE__) . ")</i></p>\n";
-
-				
-								exit();
-				
-							} // Branch based on the permitted value END
-				
-					} // LOGOUT PROCESS-URL PARAMETER
-
-
-
-# ==================================================================================================
-
-
-            #╔═══════════════════════════════════════════════════════╗
             #║																	      ║
             #║       ---| FETCH CATEGORY LABELS FORM DB |---         ║
             #║																	      ║
             #╚═══════════════════════════════════════════════════════╝
 
 			   //══════════----> DATABASE OPERATIONS <----═════════
-				if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
 			   //══════════----> DB-Step-1 : Connet to DB <----═════════
             $PDO = dbConnect('blogprojekt');
 
 			   //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
-            $sql = 'SELECT * FROM categories';
+
+            // $sql = 'SELECT * FROM categories';
+
+				$sql = 	'SELECT c.catID, c.catLabel, COUNT(b.blogID) AS numberOfPosts
+							FROM categories c
+							LEFT JOIN blogs b ON c.catID = b.catID
+							GROUP BY c.catID, c.catLabel;';
 
             $placeholders = array();
 
@@ -351,16 +292,188 @@ if(DEBUG)	      		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: User is L
 if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
 				}
 
+				//══════════----> CHECK IF ANY CATEGORY HAS BIN LOADED FROM DB<----═════════
 
-				$categoriesArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
+				$rowCount = $PDOStatement->rowCount();
+
+if(DEBUG_V)	echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$rowCount: $rowCount <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+				if( $rowCount === 0 ) {
+
+if(DEBUG)		echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: No Category was loaded! <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+					$errorLoadCategory = " No Category Was Uploaded! ";
+
+
+				} else {
+if(DEBUG)		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: $rowCount categories are successfully loaded. <i>(" . basename(__FILE__) . ")</i></p>\n";				
+
+
+					$categoriesArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
+
+				} // CHECK IF ANY CATEGORY HAS BIN LOADED FROM DB END
 
 // if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$categoriesArray <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
 // if(DEBUG_A)	print_r($categoriesArray);					
 // if(DEBUG_A)	echo "</pre>";
 
 
+
 # ==================================================================================================				
 
+            #╔═══════════════════════════════════════════════════════╗
+            #║																		   ║
+            #║        	---| URL PARAMETER PROCESSES |---	         ║
+            #║																		   ║
+            #╚═══════════════════════════════════════════════════════╝
+
+				//══════════----> GET ARRAY PREVIEW <----═════════
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_GET <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($_GET);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+				//══════════----> URL-STEP-1 : Check if the url prameters is passed <----═════════
+
+            if(isset($_GET['action']) === true ) {
+if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>: URL parameter 'action' is passed...<i>(" . basename(__FILE__) . ")</i></p>\n";
+														
+					
+					//══════════----> URL-STEP-2 : Reading, defusing and debugging the passed URL-parameters <----═════════ 
+if(DEBUG)	   echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Parameters are reading, sanitizing...<i>(" . basename(__FILE__) . ")</i></p>\n";
+										
+					$action = sanitizeString($_GET['action']);
+
+if(DEBUG_V)		echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$action: $action <i>(" . basename(__FILE__) . ")</i></p>\n";
+					
+
+					//══════════----> URL-STEP-3 : Branch based on the permitted value of the URL parameter <----═════════
+					
+					#╔═══════════════════════════════════════════════════════╗
+            	#║        			---|LOGOUT PROCESS|---			         ║
+            	#╚═══════════════════════════════════════════════════════╝
+					if( $action === 'logout') {
+				
+						//══════════----> URL-STEP-4 : Data Processing <----═════════ 
+if(DEBUG)	     			echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout process start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+		
+						// ----> 1. Delete session data
+						session_destroy();
+		
+						// ----> 2. Redirect user to index page
+						
+						header('LOCATION: ./');
+						
+
+if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: User is Logged out...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+		
+						exit();
+		
+					} // LOGOUT PROCESS END 
+
+
+					#╔═══════════════════════════════════════════════════════╗
+            	#║        		---|BLOGS FILTERING PROCESS|---	         ║
+            	#╚═══════════════════════════════════════════════════════╝
+					
+					if( $action === 'showCategory') {
+if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Show filterd category process start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+						$selectedCategory = sanitizeString($_GET['id']);
+
+if(DEBUG_V)			echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$selectedCategory: $selectedCategory <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+						$sql =	'SELECT userFirstName, userLastName, userCity, blogHeadline, blogImagePath, blogImageAlignment, blogContent, blogDate, catLabel
+									FROM blogs
+									INNER JOIN users USING (userID)
+									INNER JOIN categories USING (catID)
+									WHERE catID = :catID
+									ORDER BY blogDate DESC';
+
+						$placeholders = array( 'catID' => $selectedCategory );
+
+					} // BLOGS FILTERING PROCESS
+
+				} else {
+
+					//----> IF NO GET URL PARAMETER IS PASSED MUSS DISPLAY ALL POSTS 
+					$sql =	'SELECT userFirstName, userLastName, userCity, blogHeadline, blogImagePath, blogImageAlignment, blogContent, blogDate, catLabel
+								FROM blogs
+								INNER JOIN users USING (userID)
+								INNER JOIN categories USING (catID)
+								ORDER BY blogDate DESC';
+
+					$placeholders = array();
+
+				} 
+				
+
+				#╔═════════════════════════════════════════════════════╗
+				#║																	    ║
+				#║         ---|FETCH BLOG-POSTS FROM DB |----          ║
+				#║																	    ║
+				#╚═════════════════════════════════════════════════════╝
+				//══════════----> DB-Step-1 : Connet to DB <----═════════
+				// $PDO = dbConnect('blogprojekt'); //---> is already connected
+
+				//══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
+				//----> IS IN LINE 469
+				// $sql = 'SELECT userFirstName, userLastName, userCity, blogHeadline, blogImagePath, blogImageAlignment, blogContent, blogDate, catLabel
+				//          FROM blogs
+				//          INNER JOIN users USING (userID)
+				//          INNER JOIN categories USING (catID)
+				//          ORDER BY blogDate DESC';
+
+				// $placeholders = array();
+
+
+				//══════════----> DB-Step-3 : Prepared Statements <----═════════
+				try {
+					// Prepare: SQL-Statement vorbereiten
+					$PDOStatement = $PDO->prepare($sql);
+					
+					// Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
+					$PDOStatement->execute($placeholders);
+					// showQuery($PDOStatement);
+					
+				} catch(PDOException $error) {
+if(DEBUG)         echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
+            }
+
+
+				//══════════----> CHECK IF ANY BLOGS HAS BIN LOADED FROM DB<----═════════
+
+				$rowCount = $PDOStatement->rowCount();
+
+if(DEBUG_V)	echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$rowCount: $rowCount <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+				if( $rowCount === 0 ) {
+
+if(DEBUG)		echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: No blog post was loaded! <i>(" . basename(__FILE__) . ")</i></p>\n";
+
+					$errorLoadBlog = " No Blog Post Was Uploaded ";
+
+
+				} else {
+if(DEBUG)		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: $rowCount blogs are successfully loaded. <i>(" . basename(__FILE__) . ")</i></p>\n";				
+
+
+            	//══════════----> DB-Step-4 : Daten proccess <----═════════
+            	//----> Save blogs in an array
+            	$allBlogsArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
+
+
+// if(DEBUG_A)		echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$allBlogsArray <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)		print_r($allBlogsArray);					
+// if(DEBUG_A)		echo "</pre>";
+
+
+				} // CHECK IF ANY BLOGS HAS BIN LOADED END
+
+				//══════════----> CLOSE DB CONNECTION <----═════════ 
+				dbClose($PDO, $PDOStatement);
 
 # ══════════════════════════════════════════════════════════════════════════════════════════════════
 ?>
@@ -387,7 +500,9 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 
 		
 			<!-- ========== LOGIN FORM START ========== -->
-			<?php if( !isset($_SESSION['isUserLoggedIn'])  ) : ?>
+
+			<!-- If user is loggedin is Login form hidden -->
+			<?php if( !isset($_SESSION['isUserLoggedIn'])  ) : ?> 
 				<div class="login">
 					
 					<form class="form" action="" method="POST">
@@ -413,9 +528,10 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 					</form>
 
 					<!-- Placeholder for error messages -->
-					<span class="login-error"><?= $loginError ?></span>
+					<?php if( isset($loginError)): ?><span class="login-error"><?= $loginError ?></span> <?php endif ?>
 
 				</div>
+				<!-- ---------- LOGIN FORM END ----------- -->
 			<?php else : ?>
 
 				<!-- ========== MENU START ========== -->						
@@ -430,7 +546,7 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 				<!-- ---------- MENU END ----------- -->
 
 			<?php endif ?>
-			<!-- ---------- LOGIN FORM END ----------- -->
+			
 		
 		</header>
 		<!-- ---------- HEADER END ----------- -->
@@ -444,10 +560,6 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 			
 			<section class="row">
 
-				<!-- ========== SHOW ALL START ========== -->
-				<!-- ---------- SHOW ALL  END ----------- -->
-
-
 				<!-- ========== BLOG POSTS START ========== -->
 					<div class="col-lg-8">
 						<div class="blogs-wrapper-header">
@@ -455,118 +567,43 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 									<h5>Blogs</h5>
 								</div>
 								<div class="blog-show-all" >
-										<a class="show-all-blogs-link" href="#">SHOW ALL</a>
+										<a class="show-all-blogs-link" href="index.php">SHOW ALL</a>
 								</div>
 						</div>
 
+						<h3><?= $errorLoadBlog ?></h3>
 
-						<article class="blog-post-container">							
+						<?php foreach( $allBlogsArray as $blog) : ?>
 
-							<h3 class="post-category">Category: ???</h3>
+							<article class="blog-post-container">
 
-							<h2 class="post-title">BLOG Title</h2>
-							<div class="post-infos">
-								<p>BY ??? ??? am 24.08.2017 um 12:33 Uhr</p>
-							</div>
-							<div class="post-content">
+								<!-- Category -->
+								<h3 class="post-category">Category: <b><?= $blog['catLabel'] ?></b></h3>
 
-								<figure class="post-img right">
-									<img src="./css/images/product-01.png" alt=""  >
-								</figure>
-								
-								
-								<p class="post-paragraph">
-									Lorem ipsum dolor sit 
-									amet consectetur, adipisicing 
-									elit. Tenetur accusantium amet, 
-									culpa exercitationem voluptatem 
-									itaque repellat asperiores? Quam r
-									ecusandae itaque ipsum beatae conseq
-									uuntur? Molestiae non quae cum vero
-										totam beatae.
+								<!-- Post headline -->
+								<h2 class="post-title"><?= $blog['blogHeadline'] ?></h2>
+
+								<!-- Author Infos -->
+								<div class="post-infos">
+									<p>BY <b><?= $blog['userFirstName'] ?> <?= $blog['userLastName'] ?></b> (<?= $blog['userCity'] ?>) am <?= isoToEuDateTime($blog['blogDate'])['date'] ?> um <?= isoToEuDateTime($blog['blogDate'])['time']?> Uhr</p>
+								</div>
+
+								<div class="post-content">
+
+									<!-- Image Upload -->
+									<figure class="post-img <?= $blog['blogImageAlignment'] ?>">
+									
+											<img src="<?= $blog['blogImagePath'] ?>" >
 										
-										Lorem ipsum dolor sit 
-									amet consectetur, adipisicing 
-									elit. Tenetur accusantium amet, 
-									culpa exercitationem voluptatem 
-									itaque repellat asperiores? Quam r
-									ecusandae itaque ipsum beatae conseq
-									uuntur? Molestiae non quae cum vero
-										totam beatae.
-										Lorem ipsum dolor sit 
-									amet consectetur, adipisicing 
-									elit. Tenetur accusantium amet, 
-									culpa exercitationem voluptatem 
-									itaque repellat asperiores? Quam r
-									ecusandae itaque ipsum beatae conseq
-									uuntur? Molestiae non quae cum vero
-										totam beatae.
-									
-								</p>
-
-								
-								
-							</div>
-
-						</article>
-
-
-
-						<article class="blog-post-container">
-							
-
-							<h3 class="post-category">Category: ???</h3>
-
-							<h2 class="post-title">BLOG Title</h2>
-							<div class="post-infos">
-								<p>BY ??? ??? am 24.08.2017 um 12:33 Uhr</p>
-							</div>
-							<div class="post-content">
-
-								<figure class="post-img left">
-									<img src="./css/images/product-01.png" alt=""  >
-								</figure>
-								
-								
-								<p class="post-paragraph">
-									Lorem ipsum dolor sit 
-									amet consectetur, adipisicing 
-									elit. Tenetur accusantium amet, 
-									culpa exercitationem voluptatem 
-									itaque repellat asperiores? Quam r
-									ecusandae itaque ipsum beatae conseq
-									uuntur? Molestiae non quae cum vero
-										totam beatae.
-										
-										Lorem ipsum dolor sit 
-									amet consectetur, adipisicing 
-									elit. Tenetur accusantium amet, 
-									culpa exercitationem voluptatem 
-									itaque repellat asperiores? Quam r
-									ecusandae itaque ipsum beatae conseq
-									uuntur? Molestiae non quae cum vero
-										totam beatae.
-										Lorem ipsum dolor sit 
-									amet consectetur, adipisicing 
-									elit. Tenetur accusantium amet, 
-									culpa exercitationem voluptatem 
-									itaque repellat asperiores? Quam r
-									ecusandae itaque ipsum beatae conseq
-									uuntur? Molestiae non quae cum vero
-										totam beatae.
-									
-								</p>
-
-									
+									</figure>
+											
+									<!-- Post Content  -->
+									<p class="post-paragraph"><?= nl2br( $blog['blogContent'] , false ) ?></p>									
 									
 								</div>
 
-
-							
-
-						</article>
-
-
+							</article>
+						<?php endforeach ?>
 
 					</div>
 				<!-- ---------- BLOGS POSTS END ----------- -->
@@ -574,32 +611,48 @@ if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ER
 				<!-- ========== CATEGORIES START ========== -->
 					<div class="col-lg-4 ">
 						<div class="blog-sidebar-category">
+
 							<div class="category-title">
 								<h5>Categories</h5>
 							</div>
 
-							<ul class="cat-list">
-
-								<?php foreach( $categoriesArray as $category ) : ?>
-									<li>
-										<a class="category" href="?action=showCategory&id=<?= $category['catID'] ?>">
-											<h5 class="cat-title"><?= $category['catLabel'] ?></h5>
-											<h5 class="cat-quantity">12</h5>
-										</a>
-									</li>
-								<?php endforeach ?>
-							</ul>
-
+							<!-- Show error if no Category loaded is -->
+							<?php if(isset($errorLoadCategory)) : ?>
+								<h3><?= $errorLoadCategory ?></h3>
 							
-						</div>
+								
+							<?php else : ?> 
+								<!-- if categories was loaded from db -->
+								<ul class="cat-list">
 
+									<?php
+
+										// Identify the currently selected category
+									 	$currentCatID = isset($_GET['id']) ? $_GET['id'] : NULL;
+
+									 	foreach( $categoriesArray as $category ) : 
+
+										$isActive = ($category['catID'] == $currentCatID ) ? 'cat-active' : ''; // Highlight the selected category
+									 
+									?>
+										<li>
+											<a class="category <?= $isActive ?>" href="?action=showCategory&id=<?= $category['catID'] ?>">
+												<h5 class="cat-title"><?= $category['catLabel'] ?></h5>
+												<h5 class="cat-quantity"><?= $category['numberOfPosts'] ?></h5>
+											</a>
+										</li>
+									<?php endforeach ?>
+
+								</ul>
+
+							<?php endif ?>
+
+						</div>
 					</div>
 				<!-- ---------- CATEGORIES END ----------- -->
 
 			</section>
 		</main>
-
-
 
 		<!-- ---------- CONTENT END ----------- -->
 
