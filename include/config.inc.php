@@ -14,7 +14,7 @@
 				define('DB_HOST',								'localhost');
 				define('DB_NAME',								'blogprojekt');
 				define('DB_USER',								'root');
-				define('DB_PWD',								'2401'); // TODO: Remove this password later
+				define('DB_PWD',								''); 
 
 				
 #				══════════----| EXTERNAL STRING VALIDATION CONFIGURATION |----═════════				

@@ -158,13 +158,13 @@ form.login {
 
 
 /********** AVATAR IMAGE **********/
-img.avatar {
+/* img.avatar {
 	width: 150px;
 	height: 150px;
 	margin: 15px 15px 15px 0;
 	border: 1px solid lightgray;
 	padding: 5px;
-}
+} */
 
 /********** USER MESSAGES STYLES **********/
  /* .error {
@@ -383,9 +383,7 @@ input:focus ~ label, input:not(:placeholder-shown) ~ label {
 }
 
 
-input:focus {
-	border-color: #004356;
-}
+input:focus {border-color: #004356;}
 
 .login-error {
    display: block;
@@ -416,14 +414,10 @@ input:focus {
    margin-left: -15px;
 }
 
-h1 {
-   text-align: center;
-}
+h1 {text-align: center;}
 
 
-.intro-title {
-   letter-spacing: 0.3rem;
-}
+.intro-title {letter-spacing: 0.3rem;}
 
 /* 
    --- CATEGORY ---
@@ -452,8 +446,6 @@ h1 {
 
 
 .category-title {height: 4.5rem}
-
-
 
 .section-title h5 {
    color: #111;
@@ -543,7 +535,6 @@ h1 {
    text-decoration: underline;
 }
 
-
 .cat-quantity {
    height: 2.5em;
    width: 2.5em;
@@ -553,6 +544,7 @@ h1 {
    border-radius: 999px;
    color: #017286;
 }
+
 /* 
    --- BLOG CONTENT ---
    =================================
@@ -565,9 +557,7 @@ h1 {
 
 
 .blogs-wrapper-header {
-   /* margin-bottom: 3rem; */
    padding-right: 100px;
-   /* padding-left: 15px; */
    display: flex;
    align-items: baseline;
    height: 4.5rem;
@@ -610,12 +600,9 @@ h1 {
 
 .show-all-blogs-link {
    text-decoration: none;
-   /* padding: 15px 18px; */
-   /* border-radius: 30px; */
    text-transform: uppercase;
    letter-spacing: 1px;
    font-weight: 500;
-   /* border:1px solid #006699; */
    color: #006699;
 }
 
@@ -632,10 +619,6 @@ h1 {
    margin-right: 4rem;
    margin-bottom: 1rem;
    padding: 1.2rem;
-}
-
-.post-wrapper {
-   
 }
 
 .post-category {
