@@ -37,11 +37,11 @@
 
 				
 #				══════════----| DEBUGGING |----═════════				
-				define('DEBUG', 								true);		// DEBUGGING FOR MAIN DOCUMENT
-				define('DEBUG_A', 							true);		// DEBUGGING FOR ARRAYS
+				define('DEBUG', 								false);		// DEBUGGING FOR MAIN DOCUMENT
+				define('DEBUG_A', 							false);		// DEBUGGING FOR ARRAYS
 				define('DEBUG_V', 							false);		// DEBUGGING FOR VALUES
-				define('DEBUG_F', 							true);		// DEBUGGING FOR FUNCTIONS
-				define('DEBUG_DB', 							true);		// DEBUGGING FOR DB OPERATIONS
+				define('DEBUG_F', 							false);		// DEBUGGING FOR FUNCTIONS
+				define('DEBUG_DB', 							false);		// DEBUGGING FOR DB OPERATIONS
 
 
 # ==================================================================================================

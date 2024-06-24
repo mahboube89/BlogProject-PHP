@@ -243,7 +243,7 @@ if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout proc
             #║           ---| DATABASE OPERATIONS |----            ║
             #╚═════════════════════════════════════════════════════╝
 			   //══════════----> DATABASE OPERATIONS <----═════════
-            if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
 			   //══════════----> DB-Step-1 : Connet to DB <----═════════
             $PDO = dbConnect('blogprojekt'); 
@@ -416,7 +416,7 @@ if(DEBUG)	            echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: E
                         // Display the the last inserted catID
                         $newCategoryID = $PDO->lastInsertID();
                         
-                        // $categoriesArray[] = array ( 'catID' => $newCategoryID, 'catLabel' => $newCategoryName );
+                        $categoriesArray[] = array ( 'catID' => $newCategoryID, 'catLabel' => $newCategoryName );
 
 if(DEBUG)	            echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: The category $newCategoryName with ID $newCategoryID has been successfully saved. <i>(" . basename(__FILE__) . ")</i></p>\n";				
                         

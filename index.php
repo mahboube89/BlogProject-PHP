@@ -690,6 +690,11 @@ if(DEBUG)		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: $rowCount blo
 		<!-- ---------- CONTENT END ----------- -->
 
 		<!-- ========== FOOTER START ========== -->
+		 
+		<footer>
+    		<p>&copy; <?php echo date("Y"); ?> | Developed by <a href="https://github.com/mahboube89" target="_blank">Mahbobubeh Ranjbar</a></p>
+		</footer>
+
 		<!-- ---------- FOOTER END ----------- -->
 		
 		
