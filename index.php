@@ -132,7 +132,7 @@ if(DEBUG_V)		echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: \$errorPas
 					if( $errorUserEmail !== NULL OR $errorPassword !== NULL) {
 if(DEBUG)	      echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: There are still errors in the form! <i>(" . basename(__FILE__) . ")</i></p>\n";				
 
-						$loginError= "The email or password you entered is incorrect. Please try again.";
+						$loginError= "The email or password you entered is incorrect. Please try again."; // a neutral error for user
 
 					} else {
 if(DEBUG)	      echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: The form is formally error-free. <i>(" . basename(__FILE__) . ")</i></p>\n";				
@@ -200,6 +200,7 @@ if(DEBUG)	      	echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Email '
 							//══════════----> 2.PASSWORD VALIDATE <----═════════
 if(DEBUG)	      	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Password validation start...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
+							// ----> Password verify 
 							if (password_verify( $password, $userInfos['userPassword']) === false ) {
 
 if(DEBUG)	      		echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Error: Incorrect password for '$userEmail'! <i>(" . basename(__FILE__) . ")</i></p>\n";
@@ -222,6 +223,8 @@ if(DEBUG)	      			echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: Erro
 									
 									$loginError = 'Login is not possible! Please check if in your browser are cookies activ!';
 									
+									// TODO: save it in ErrorLog file
+
 								} else {
 
 if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Session has been successfully started. <i>(" . basename(__FILE__) . ")</i></p>\n";
@@ -232,6 +235,8 @@ if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Sessi
 									$_SESSION['IPAddress'] 			= $_SERVER['REMOTE_ADDR'];
 									$_SESSION['isUserLoggedIn'] 	= true;
 
+									// TODO: We can save userFirstName and userLastName in Session instead of in Dashboard page, a db process haben to get userdate mit userID from DB
+
 // if(DEBUG_A)						echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$_SESSION <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
 // if(DEBUG_A)						print_r($_SESSION);					
 // if(DEBUG_A)						echo "</pre>";
@@ -240,9 +245,9 @@ if(DEBUG)	      			echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Sessi
 									
 									header('LOCATION: dashboard.php');
 
-									exit();							
+									// exit();							
 
-								} // LOGIN PROCESS AND PREPARE SESSSION EN								
+								} // LOGIN PROCESS AND PREPARE SESSSION END								
 
 							} // PASSWORD VALIDATE END
 
@@ -381,22 +386,49 @@ if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: User is Log
 					if( $action === 'showCategory') {
 if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Show filterd category process start...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
-						$selectedCategory = sanitizeString($_GET['id']);
 
-if(DEBUG_V)			echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$selectedCategory: $selectedCategory <i>(" . basename(__FILE__) . ")</i></p>\n";
+						//---> Check if Category Id ist passed in url
+						if(!isset ($_GET['id']) ) {
 
-						$sql =	'SELECT userFirstName, userLastName, userCity, blogHeadline, blogImagePath, blogImageAlignment, blogContent, blogDate, catLabel
-									FROM blogs
-									INNER JOIN users USING (userID)
-									INNER JOIN categories USING (catID)
-									WHERE catID = :catID
-									ORDER BY blogDate DESC';
+if(DEBUG)	      	echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: An error occurred while reading Category ID ...<i>(" . basename(__FILE__) . ")</i></p>\n";
 
-						$placeholders = array( 'catID' => $selectedCategory );
+							$errorLoadBlog = " No Filtering possible!";
+
+							$sql='SELECT userFirstName, userLastName, userCity, blogHeadline, blogImagePath, blogImageAlignment, blogContent, blogDate, catLabel
+								FROM blogs
+								INNER JOIN users USING (userID)
+								INNER JOIN categories USING (catID)
+								ORDER BY blogDate DESC';
+
+							$placeholders = array();
+
+
+						} else {
+
+							$selectedCategory = sanitizeString($_GET['id']);
+	
+	if(DEBUG_V)			echo "<p class='debug value'><b>Line " . __LINE__ . "</b>: \$selectedCategory: $selectedCategory <i>(" . basename(__FILE__) . ")</i></p>\n";
+							
+	
+							// TODO: check if format Id is integer
+							//	TODO: Check if ID is actually existing in DB
+	
+	
+							
+							$sql =	'SELECT userFirstName, userLastName, userCity, blogHeadline, blogImagePath, blogImageAlignment, blogContent, blogDate, catLabel
+										FROM blogs
+										INNER JOIN users USING (userID)
+										INNER JOIN categories USING (catID)
+										WHERE catID = :catID
+										ORDER BY blogDate DESC';
+	
+							$placeholders = array( 'catID' => $selectedCategory );
+						} // Check if Category Id ist passed in url END
 
 					} // BLOGS FILTERING PROCESS
 
 				} else {
+
 
 					//----> IF NO GET URL PARAMETER IS PASSED MUSS DISPLAY ALL POSTS 
 					$sql =	'SELECT userFirstName, userLastName, userCity, blogHeadline, blogImagePath, blogImageAlignment, blogContent, blogDate, catLabel
@@ -512,13 +544,13 @@ if(DEBUG)		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: $rowCount blo
 
 						<!-- Email input box -->
 						<div class="textbox">
-							<input type="text" name="f1" id="email" placeholder="" >
+							<input type="text" name="f1" id="email" placeholder="" class="login-input" >
 							<label for="email">Enter your email</label>
 						</div>
 
 						<!-- Password input box -->
 						<div class="textbox">
-							<input type="password" name="f2" id="password" placeholder="" >
+							<input type="password" name="f2" id="password" placeholder="" class="login-input" >
 							<label for="password">Enter your password</label>
 						</div>
 
@@ -571,7 +603,7 @@ if(DEBUG)		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: $rowCount blo
 								</div>
 						</div>
 
-						<h3><?= $errorLoadBlog ?></h3>
+						<h3 style="color: #C40D43;"><?= $errorLoadBlog ?></h3>
 
 						<?php foreach( $allBlogsArray as $blog) : ?>
 
@@ -636,6 +668,7 @@ if(DEBUG)		echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: $rowCount blo
 									 
 									?>
 										<li>
+
 											<a class="category <?= $isActive ?>" href="?action=showCategory&id=<?= $category['catID'] ?>">
 												<h5 class="cat-title"><?= $category['catLabel'] ?></h5>
 												<h5 class="cat-quantity"><?= $category['numberOfPosts'] ?></h5>

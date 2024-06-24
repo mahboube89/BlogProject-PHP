@@ -36,6 +36,8 @@
 
             //══════════----> CHECK FOR VALID SESSION <----═════════
 
+            // TODO:  first if( session_start() === false) and in else write we the rest code 
+
             if(isset($_SESSION['ID']) === false OR $_SESSION['IPAddress'] !== $_SERVER['REMOTE_ADDR'] ) {
 if(DEBUG)      echo "<p class='debug auth err'><b>Line " . __LINE__ . "</b>: Error: Invslid Session! <i>(" . basename(__FILE__) . ")</i></p>\n";
 
@@ -232,6 +234,58 @@ if(DEBUG)	      echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Logout proc
 
             #╔═══════════════════════════════════════════════════════╗
             #║																	      ║
+            #║       ---| FETCH CATEGORY LABELS FORM DB |---         ║
+            #║																	      ║
+            #╚═══════════════════════════════════════════════════════╝
+
+
+            #╔═════════════════════════════════════════════════════╗
+            #║           ---| DATABASE OPERATIONS |----            ║
+            #╚═════════════════════════════════════════════════════╝
+			   //══════════----> DATABASE OPERATIONS <----═════════
+            if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
+
+			   //══════════----> DB-Step-1 : Connet to DB <----═════════
+            $PDO = dbConnect('blogprojekt'); 
+
+			   //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
+
+            $sql = 'SELECT * FROM categories';
+
+            $placeholders = array();
+
+
+			   //══════════----> DB-Step-3 : Prepared Statements <----═════════
+            try {
+               // Prepare: SQL-Statement vorbereiten
+               $PDOStatement = $PDO->prepare($sql);
+               
+               // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
+               $PDOStatement->execute($placeholders);
+               // showQuery($PDOStatement);
+               
+            } catch(PDOException $error) {
+if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
+				}
+
+
+            //══════════----> DB-Step-4 : Daten proccess <----═════════
+            //----> Save categories in an array
+            $categoriesArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
+
+            //══════════----> CLOSE DB CONNECTION <----═════════ 
+            dbClose($PDO, $PDOStatement);
+
+// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$categoriesArray <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
+// if(DEBUG_A)	print_r($categoriesArray);					
+// if(DEBUG_A)	echo "</pre>";
+
+
+# ==================================================================================================
+
+
+            #╔═══════════════════════════════════════════════════════╗
+            #║																	      ║
             #║          ---| NEW CATEGORY FORM PROCESS |---          ║
             #║																	      ║
             #╚═══════════════════════════════════════════════════════╝
@@ -261,7 +315,7 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
                //---->[x] FORM-STEP-3-a : Formally validate field values
                //---->[x] FORM-STEP-3-b : Display error message in the form
                //---->[x] FORM-STEP-3-c : Pre-assignment of form fields
-               $errorNewCategoryName = validateInputString($newCategoryName , minLength:3);
+               $errorNewCategoryName = validateInputString($newCategoryName , minLength:3 , maxLength:50);
 
 				   //══════════----> FORM-STEP-3-d : FINAL FORM VALIDATION <----═════════
 //					---->If successful, proceed to STEP 4; if not, the processing is aborted 
@@ -362,81 +416,31 @@ if(DEBUG)	            echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: E
                         // Display the the last inserted catID
                         $newCategoryID = $PDO->lastInsertID();
                         
-                        $categoriesArray[] = array ( 'catID' => $newCategoryID, 'catLabel' => $newCategoryName );
+                        // $categoriesArray[] = array ( 'catID' => $newCategoryID, 'catLabel' => $newCategoryName );
 
 if(DEBUG)	            echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: The category $newCategoryName with ID $newCategoryID has been successfully saved. <i>(" . basename(__FILE__) . ")</i></p>\n";				
                         
                         $addCategoryUserMessage ="The category $newCategoryName has been successfully saved.";
 
+
+                        //══════════----> EMPTY CATEGORY FORM FIELD  <----═════════                      
+                        $newCategoryName = NULL ; 
+
                      } // CHECK IF SAVE CATEGORY IN DB WAS SACCESSFUL END
-
-			            //══════════----> CLOSE DB CONNECTION <----═════════ 
-                     //  dbClose($PDO, $PDOStatement); 
-
-			            //══════════----> EMPTY CATEGORY FORM FIELD  <----═════════                      
-                     $newCategoryName = NULL ; 
-
+			           			         
                   } // CHECK IF THE CATEGORY ALREADY EXISTS IN DB END
+
+                   //══════════----> CLOSE DB CONNECTION <----═════════ 
+                      dbClose($PDO, $PDOStatement); 
 
                } // Step-3-d FORM: FINAL FORM VALIDATION END   
    
             }	// NEW CATEGORY FORM PROCESS END
 
 
-# ==================================================================================================
-
-
-            #╔═══════════════════════════════════════════════════════╗
-            #║																	      ║
-            #║       ---| FETCH CATEGORY LABELS FORM DB |---         ║
-            #║																	      ║
-            #╚═══════════════════════════════════════════════════════╝
-
-
-            #╔═════════════════════════════════════════════════════╗
-            #║           ---| DATABASE OPERATIONS |----            ║
-            #╚═════════════════════════════════════════════════════╝
-			   //══════════----> DATABASE OPERATIONS <----═════════
-if(DEBUG)	echo "<p class='debug'><b>Line " . __LINE__ . "</b>: Database operations start...<i>(" . basename(__FILE__) . ")</i></p>\n";
-
-			   //══════════----> DB-Step-1 : Connet to DB <----═════════
-            $PDO = dbConnect('blogprojekt'); 
-
-			   //══════════----> DB-Step-2 : Create SQL-Statement and Placeholder-Array <----═════════
-
-            $sql = 'SELECT * FROM categories';
-
-            $placeholders = array();
-
-
-			   //══════════----> DB-Step-3 : Prepared Statements <----═════════
-            try {
-               // Prepare: SQL-Statement vorbereiten
-               $PDOStatement = $PDO->prepare($sql);
-               
-               // Execute: SQL-Statement ausführen und ggf. Platzhalter füllen
-               $PDOStatement->execute($placeholders);
-               // showQuery($PDOStatement);
-               
-            } catch(PDOException $error) {
-if(DEBUG) 		      echo "<p class='debug db err'><b>Line " . __LINE__ . "</b>: ERROR: " . $error->GetMessage() . "<i>(" . basename(__FILE__) . ")</i></p>\n";										
-				}
-
-
-            //══════════----> DB-Step-4 : Daten proccess <----═════════
-            //----> Save categories in an array
-            $categoriesArray= $PDOStatement->fetchALL(PDO::FETCH_ASSOC);
-
-            //══════════----> CLOSE DB CONNECTION <----═════════ 
-            dbClose($PDO, $PDOStatement);
-
-// if(DEBUG_A)	echo "<pre class='debug value'><b>Line " . __LINE__ . "</b>: \$categoriesArray <i>(" . basename(__FILE__) . ")</i>:<br>\n";					
-// if(DEBUG_A)	print_r($categoriesArray);					
-// if(DEBUG_A)	echo "</pre>";
-
-
 
 # ==================================================================================================
+
 
 
 #				╔═════════════════════════════════════════════════════╗
@@ -490,7 +494,7 @@ if(DEBUG)		echo "<p class='debug'><b>Line " . __LINE__ . "</b>:Field values are 
                }
 
                $errorPostHeadline         = validateInputString( $postHeadline );
-               $errorPostContent          = validateInputString( $postContent , maxLength:5000 );
+               $errorPostContent          = validateInputString( $postContent ,minLength:10, maxLength:20000 );
                
 
                //══════════----> FORM-STEP-3-d : FINAL FORM VALIDATION FOR REQUIRED FIELDS<----═════════
@@ -535,7 +539,7 @@ if(DEBUG)	            echo "<p class='debug err'><b>Line " . __LINE__ . "</b>: E
                         // Show error to user
                         $errorImageUpload = $validatedImageResult['imageError'];
 
-                     } else {
+                     } elseif( $validatedImageResult['imagePath'] !== NULL ) {
 if(DEBUG)               echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Image has been successfully uploaded in path:'<i>$validatedImageResult[imagePath]</i>' . <i>(" . basename(__FILE__) . ")</i></p>\n";	
 
                         $postImagePath = $validatedImageResult['imagePath'];
@@ -615,26 +619,26 @@ if(DEBUG)	            echo "<p class='debug ok'><b>Line " . __LINE__ . "</b>: Th
                            
                         $addPostUserMessage = "The new blog post has been successfully saved.";
 
+
+
+                        //══════════----> EMPTY NEW POST FORM FIELD  <----═════════
+
+                        $categorySelection         = NULL;
+                        $postHeadline              = NULL;
+                        $postImagePath             = NULL;
+                        $imageAlignment            = NULL; 
+                        $postContent               = NULL;
+                        
+
+                        $errorCategorySelection    = NULL;
+                        $errorPostHeadline         = NULL;
+                        $errorImageUpload          = NULL;
+                        $errorPostContent          = NULL;
+
                      } // CHECK IF NEW POST HAS BEEN SUCCESSFULLY SAVED IN DB END
 
                      //══════════----> CLOSE DB CONNECTION <----═════════ 
                      dbClose($PDO, $PDOStatement); 
-
-
-                     //══════════----> EMPTY NEW POST FORM FIELD  <----═════════
-
-                     $categorySelection         = NULL;
-                     $postHeadline              = NULL;
-                     $postImagePath             = NULL;
-                     $imageAlignment            = NULL; 
-                     $postContent               = NULL;
-                     
-
-                     $errorCategorySelection    = NULL;
-                     $errorPostHeadline         = NULL;
-                     $errorImageUpload          = NULL;
-                     $errorPostContent          = NULL;
-
 
                   } // FINAL FORM VALIDATION FOR ALL FIELDS END   
 

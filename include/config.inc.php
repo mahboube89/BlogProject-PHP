@@ -14,7 +14,7 @@
 				define('DB_HOST',								'localhost');
 				define('DB_NAME',								'blogprojekt');
 				define('DB_USER',								'root');
-				define('DB_PWD',								''); 
+				define('DB_PWD',								'2401'); 
 
 				
 #				══════════----| EXTERNAL STRING VALIDATION CONFIGURATION |----═════════				
@@ -39,7 +39,7 @@
 #				══════════----| DEBUGGING |----═════════				
 				define('DEBUG', 								true);		// DEBUGGING FOR MAIN DOCUMENT
 				define('DEBUG_A', 							true);		// DEBUGGING FOR ARRAYS
-				define('DEBUG_V', 							true);		// DEBUGGING FOR VALUES
+				define('DEBUG_V', 							false);		// DEBUGGING FOR VALUES
 				define('DEBUG_F', 							true);		// DEBUGGING FOR FUNCTIONS
 				define('DEBUG_DB', 							true);		// DEBUGGING FOR DB OPERATIONS
 
