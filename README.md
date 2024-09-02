@@ -83,4 +83,4 @@ This project is released under the MIT License. Further details can be found in 
 
 ## Video
 
-[![Watch the Video]](media/video/blog-website-overview.mp4)
+[![Download or View Video]](media/video/blog-website-overview.mp4)
