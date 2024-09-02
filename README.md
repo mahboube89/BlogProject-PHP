@@ -83,5 +83,5 @@ This project is released under the MIT License. Further details can be found in 
 
 ## Video
 
-[![Download or View Video]](media/video/blog-website-overview.gif)
+[![Download or View Video]](media/video/blog-Website-overview.gif)
 [![Download or View Video]](media/video/blog-website-overview.mp4)
